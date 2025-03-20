@@ -37,6 +37,14 @@ struct ContentView: View {
         } detail: {
             Text("Select an item")
         }
+        VStack {
+            Image(systemName: "globe")
+                .imageScale(.large)
+                .foregroundStyle(.tint)
+            Text("hi, world!")
+        }
+        .padding()
+        
     }
 
     private func addItem() {
