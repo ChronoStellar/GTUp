@@ -1,61 +1,73 @@
-//
-//  ContentView.swift
-//  CoreChal1
-//
-//  Created by Hendrik Nicolas Carlo on 20/03/25.
-//
-
+// ContentView.swift
 import SwiftUI
 import SwiftData
 
-struct ContentView: View {
-    @State private var currentScreen: String = "Home"
+enum Screen {
+    case home
+    case profile
+    case data
+    case timer
+}
 
-        var body: some View {
-            NavigationStack {
-                VStack {
+struct ContentView: View {
+    @State private var currentScreen: Screen = .home
+    
+    var body: some View {
+        NavigationStack {
+            VStack {
+                switch currentScreen {
+                case .home:
                     TimerView()
+                case .profile:
+                    ProfileView()
+                case .data:
+                    DataView()
+                case .timer:
+                    TimerSetView()
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color.gray.opacity(0.2))
-                .gesture(
-                    DragGesture()
-                        .onEnded { value in
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(backgroundColor)
+            .gesture(
+                DragGesture()
+                    .onEnded { value in
+                        switch currentScreen {
+                        case .home:
                             if value.translation.width < -100 {
-                                // Swiped Left → Go to ProfileView
-                                currentScreen = "Data"
+                                currentScreen = .data
                             } else if value.translation.width > 100 {
-                                // Swiped Right → Go to DataView
-                                currentScreen = "Profile"
+                                currentScreen = .profile
                             } else if value.translation.height < -100 {
-                                // Swiped Up → Go to TimerSetView
-                                currentScreen = "Timer"
+                                currentScreen = .timer
+                            }
+                        case .profile:
+                            if value.translation.width < -100 {
+                                currentScreen = .home
+                            }
+                        case .data:
+                            if value.translation.width > 100 {
+                                currentScreen = .home
+                            }
+                        case .timer:
+                            if value.translation.height > 100 {
+                                currentScreen = .home
                             }
                         }
-                )
-                .navigationDestination(isPresented: Binding(
-                    get: { currentScreen != "Home" },
-                    set: { if !$0 { currentScreen = "Home" } }
-                )) {
-                    switch currentScreen {
-                    case "Profile":
-                        ProfileView()
-                        .navigationBarBackButtonHidden(true)
-                    case "Data":
-                        DataView()
-                        .navigationBarBackButtonHidden(true)
-                    case "Timer":
-                        TimerSetView()
-                        .navigationBarBackButtonHidden(true)
-                    default:
-                        TimerView()
-                        .navigationBarBackButtonHidden(true)
                     }
-                }
-                .animation(.easeInOut, value: currentScreen)
-                
-            }
+            )
+            .animation(.easeInOut, value: currentScreen)
+            .navigationBarBackButtonHidden(true)
         }
+    }
+    
+    private var backgroundColor: Color {
+        switch currentScreen {
+        case .home: return Color.gray.opacity(0.2)
+        case .profile: return Color.blue.opacity(0.2)
+        case .data: return Color.green.opacity(0.2)
+        case .timer: return Color.red.opacity(0.2)
+        }
+    }
 }
 
 #Preview {
