@@ -9,58 +9,53 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    @State private var currentScreen: String = "Home"
 
-    var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
+        var body: some View {
+            NavigationStack {
+                VStack {
+                    TimerView()
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.gray.opacity(0.2))
+                .gesture(
+                    DragGesture()
+                        .onEnded { value in
+                            if value.translation.width < -100 {
+                                // Swiped Left → Go to ProfileView
+                                currentScreen = "Data"
+                            } else if value.translation.width > 100 {
+                                // Swiped Right → Go to DataView
+                                currentScreen = "Profile"
+                            } else if value.translation.height < -100 {
+                                // Swiped Up → Go to TimerSetView
+                                currentScreen = "Timer"
+                            }
+                        }
+                )
+                .navigationDestination(isPresented: Binding(
+                    get: { currentScreen != "Home" },
+                    set: { if !$0 { currentScreen = "Home" } }
+                )) {
+                    switch currentScreen {
+                    case "Profile":
+                        ProfileView()
+                        .navigationBarBackButtonHidden(true)
+                    case "Data":
+                        DataView()
+                        .navigationBarBackButtonHidden(true)
+                    case "Timer":
+                        TimerSetView()
+                        .navigationBarBackButtonHidden(true)
+                    default:
+                        TimerView()
+                        .navigationBarBackButtonHidden(true)
                     }
                 }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-        } detail: {
-            Text("Select an item")
-        }
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("hi, world!")
-        }
-        .padding()
-        
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
+                .animation(.easeInOut, value: currentScreen)
+                
             }
         }
-    }
 }
 
 #Preview {
