@@ -36,11 +36,11 @@ struct ContentView: View {
                             if value.translation.width < -100 {
                                 currentScreen = .data
                             } else if value.translation.width > 100 {
-                                currentScreen = .profile
-                            } else if value.translation.height < -100 {
                                 currentScreen = .timer
+                            } else if value.translation.height < -100 {
+                                currentScreen = .profile
                             }
-                        case .profile:
+                        case .timer:
                             if value.translation.width < -100 {
                                 currentScreen = .home
                             }
@@ -48,7 +48,7 @@ struct ContentView: View {
                             if value.translation.width > 100 {
                                 currentScreen = .home
                             }
-                        case .timer:
+                        case .profile:
                             if value.translation.height > 100 {
                                 currentScreen = .home
                             }
@@ -62,10 +62,10 @@ struct ContentView: View {
     
     private var backgroundColor: Color {
         switch currentScreen {
-        case .home: return Color.gray.opacity(0.2)
-        case .profile: return Color.blue.opacity(0.2)
-        case .data: return Color.green.opacity(0.2)
-        case .timer: return Color.red.opacity(0.2)
+        case .home: return Color.black.opacity(0.8)
+        case .profile: return Color.black.opacity(0.8)
+        case .data: return Color.black.opacity(0.8)
+        case .timer: return Color.black.opacity(0.8)
         }
     }
 }
