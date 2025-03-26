@@ -62,10 +62,10 @@ struct ContentView: View {
     
     private var backgroundColor: Color {
         switch currentScreen {
-        case .home: return Color.black.opacity(0.8)
-        case .profile: return Color.black.opacity(0.8)
-        case .data: return Color.black.opacity(0.8)
-        case .timer: return Color.black.opacity(0.8)
+        case .home: return Color.primary
+        case .profile: return Color.primary
+        case .data: return Color.primary
+        case .timer: return Color.primary
         }
     }
 }

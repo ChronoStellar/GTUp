@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct TimerSetView: View {
-    // State untuk timer
     @State private var hours: Int
     @State private var minutes: Int
     @State private var seconds: Int
@@ -21,24 +20,19 @@ struct TimerSetView: View {
     @State private var showBreakPicker: Bool = false
     @State private var showAlert: Bool = false
     
-    // State untuk label
     @State private var selectedLabel: String = "None"
     @State private var labels: [String] = ["None", "Work", "Study", "Exercise"]
     @State private var showLabelPicker: Bool = false
     @State private var showAddLabelModal: Bool = false
     @State private var newLabel: String = ""
     
-    // State untuk "When Timer Ends"
     @State private var selectedTimerEndOption: String
     @State private var showTimerEndPicker: Bool = false
     private let timerEndOptions = ["Vibrate", "Notification Only", "Ringing"]
     
-    // State untuk vibrate toggle (Add as Widget)
     @State private var vibrateOn: Bool = true
     
-    // Inisialisasi dengan memuat data dari UserDefaults
     init() {
-        // Memuat timer dari UserDefaults
         let savedHours = UserDefaults.standard.integer(forKey: "timerHours")
         let savedMinutes = UserDefaults.standard.integer(forKey: "timerMinutes")
         let savedSeconds = UserDefaults.standard.integer(forKey: "timerSeconds")
@@ -49,29 +43,27 @@ struct TimerSetView: View {
         _seconds = State(initialValue: savedSeconds)
         _breakMinutes = State(initialValue: savedBreakMinutes != 0 ? savedBreakMinutes : 5)
         
-        // Memuat labels dari UserDefaults
         if let savedLabels = UserDefaults.standard.array(forKey: "labels") as? [String] {
             _labels = State(initialValue: savedLabels)
         }
         
-        // Memuat opsi "When Timer Ends" dari UserDefaults
         let savedTimerEndOption = UserDefaults.standard.string(forKey: "timerEndOption") ?? "Vibrate"
         _selectedTimerEndOption = State(initialValue: savedTimerEndOption)
     }
     
     var body: some View {
         ZStack {
-            Color.black.opacity(0.8)
+            Color.primary
                 .ignoresSafeArea()
             
             VStack(spacing: 20) {
-                // Title
                 Text("Timer")
-                    .font(.system(size: 35, weight: .bold))
+                    .font(.system(size: 40, weight: .bold))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
                     .padding(.top)
+                    .padding(.leading, 15)
                 
                 Spacer()
                 
@@ -87,13 +79,12 @@ struct TimerSetView: View {
                             .foregroundColor(.white)
                     }
                     
-                    // Underline
                     Rectangle()
                         .frame(height: 2)
                         .foregroundColor(.gray.opacity(0.5))
                         .padding(.horizontal)
+                        .padding(.bottom, 5)
                     
-                    // Break Duration
                     Button(action: {
                         tempBreakMinutes = breakMinutes
                         showBreakPicker.toggle()
@@ -107,19 +98,26 @@ struct TimerSetView: View {
                         }
                     }
                 }
+                .padding(.top, 30)
+                .padding(.bottom, 13)
+                .padding(.horizontal)
+                .background(Color.gray.opacity(0.2))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
                 .padding(.horizontal)
                 
-                // Set Button
                 Button(action: {
-                    // Simpan timer ke UserDefaults
                     UserDefaults.standard.set(hours, forKey: "timerHours")
                     UserDefaults.standard.set(minutes, forKey: "timerMinutes")
                     UserDefaults.standard.set(seconds, forKey: "timerSeconds")
                     UserDefaults.standard.set(breakMinutes, forKey: "breakMinutes")
-                    // Simpan opsi "When Timer Ends" ke UserDefaults
+                    UserDefaults.standard.set(selectedLabel, forKey: "timerLabel")
                     UserDefaults.standard.set(selectedTimerEndOption, forKey: "timerEndOption")
                     
                     print("Timer set: \(hours)h \(minutes)m \(seconds)s, Break: \(breakMinutes)m, Label: \(selectedLabel), When Timer Ends: \(selectedTimerEndOption)")
+                    
+                    // Kirim notifikasi ke TimerView
+                    NotificationCenter.default.post(name: NSNotification.Name("TimerSetNotification"), object: nil)
+                    
                     showAlert = true
                 }) {
                     Text("Set")
@@ -139,9 +137,7 @@ struct TimerSetView: View {
                     )
                 }
                 
-                // List Section (Label, When Timer Ends, Add as Widget)
                 VStack(spacing: 0) {
-                    // Label Section
                     Button(action: {
                         showLabelPicker.toggle()
                     }) {
@@ -164,7 +160,6 @@ struct TimerSetView: View {
                         .background(Color.gray.opacity(0.2))
                     }
                     
-                    // When Timer Ends Section
                     Button(action: {
                         showTimerEndPicker.toggle()
                     }) {
@@ -187,7 +182,6 @@ struct TimerSetView: View {
                         .background(Color.gray.opacity(0.2))
                     }
                     
-                    // Add as Widget Section
                     HStack {
                         Text("Add as widget")
                             .font(.system(size: 16))
@@ -207,7 +201,6 @@ struct TimerSetView: View {
                 Spacer()
             }
             
-            // Time Picker Modal
             if showTimePicker {
                 Color.black.opacity(0.8)
                     .ignoresSafeArea()
@@ -262,7 +255,6 @@ struct TimerSetView: View {
                 .padding()
             }
             
-            // Break Picker Modal
             if showBreakPicker {
                 Color.black.opacity(0.8)
                     .ignoresSafeArea()
@@ -299,7 +291,6 @@ struct TimerSetView: View {
                 .padding()
             }
             
-            // Label Picker Modal
             if showLabelPicker {
                 Color.black.opacity(0.8)
                     .ignoresSafeArea()
@@ -320,7 +311,6 @@ struct TimerSetView: View {
                     }
                     .padding()
                     
-                    // Daftar Label dengan Tombol Delete
                     ScrollView {
                         VStack(spacing: 0) {
                             ForEach(labels, id: \.self) { label in
@@ -337,14 +327,13 @@ struct TimerSetView: View {
                                     
                                     Spacer()
                                     
-                                    if label != "None" { // Tidak boleh hapus "None"
+                                    if label != "None" {
                                         Button(action: {
                                             if let index = labels.firstIndex(of: label) {
                                                 labels.remove(at: index)
                                                 if selectedLabel == label {
                                                     selectedLabel = "None"
                                                 }
-                                                // Simpan perubahan ke UserDefaults
                                                 UserDefaults.standard.set(labels, forKey: "labels")
                                             }
                                         }) {
@@ -384,7 +373,6 @@ struct TimerSetView: View {
                 .padding()
             }
             
-            // Add Label Modal
             if showAddLabelModal {
                 Color.black.opacity(0.8)
                     .ignoresSafeArea()
