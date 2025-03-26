@@ -26,7 +26,7 @@ struct DataView: View {
                 .frame(width: 360, height: 200)
                 .background(Color.red)
             }.padding(20)
-                .navigationTitle(Text("Data Analytics"))
+//                .navigationTitle(Text("Data Analytics"))
         }
     }
 }
