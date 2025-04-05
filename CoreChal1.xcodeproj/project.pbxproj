@@ -23,6 +23,19 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		3F90196A2D951975008A4219 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		9B7F3D602D8BBCF50006138E /* CoreChal1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoreChal1.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B7F3D722D8BBCF60006138E /* CoreChal1Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoreChal1Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -102,6 +115,7 @@
 				9B7F3D5C2D8BBCF50006138E /* Sources */,
 				9B7F3D5D2D8BBCF50006138E /* Frameworks */,
 				9B7F3D5E2D8BBCF50006138E /* Resources */,
+				3F90196A2D951975008A4219 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);

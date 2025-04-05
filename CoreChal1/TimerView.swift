@@ -38,7 +38,7 @@ struct TimerView: View {
     @State private var isLongPressing: Bool = false
     @State private var longPressProgress: CGFloat = 0.0
     @State private var longPressTimer: Timer? = nil
-    private let longPressDuration: Double = 2.0 // Durasi long press (2 detik)
+    private let longPressDuration: Double = 0.5
     
     // For background timer persistence
     @State private var timerStartDate: Date? = nil
@@ -84,11 +84,11 @@ struct TimerView: View {
                 }
             
             // Work Section
-            VStack(spacing: 10) {
-                Image(systemName: "person.fill.viewfinder")
+            VStack(spacing: 25) {
+                Image("Work")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 100, height: 100)
+                    .frame(width: 200, height: 200)
                     .foregroundColor(.white)
                     .opacity(workImageOpacity)
                     .animation(
@@ -121,12 +121,7 @@ struct TimerView: View {
                         value: workOffset
                     )
                 
-                // Countdown Timer
                 ZStack {
-                    RoundedRectangle(cornerRadius: 10)
-                        .frame(width: 140, height: 20)
-                    
-                    // Progress Bar
                     GeometryReader { geometry in
                         ZStack(alignment: .leading) {
                             RoundedRectangle(cornerRadius: 10)
@@ -140,7 +135,6 @@ struct TimerView: View {
                     }
                     .frame(width: 150, height: 50)
                     
-                    // Timer Countdown
                     Text(formatTime(workTimeRemaining))
                         .font(.system(size: 25, weight: .medium))
                         .foregroundColor(.white)
@@ -196,11 +190,11 @@ struct TimerView: View {
             }
             
             // Break Section
-            VStack(spacing: 10) {
-                Image(systemName: "figure.cooldown")
+            VStack(spacing: 25) {
+                Image("Break")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 100, height: 100)
+                    .frame(width: 200, height: 200)
                     .foregroundColor(.white)
                     .opacity(breakImageOpacity)
                     .animation(
@@ -234,12 +228,7 @@ struct TimerView: View {
                         value: breakOffset
                     )
                 
-                // Timer Countdown dan Progress Bar untuk Break
                 ZStack {
-                    RoundedRectangle(cornerRadius: 10)
-                        .frame(width: 140, height: 20)
-                    
-                    // Progress Bar
                     GeometryReader { geometry in
                         ZStack(alignment: .leading) {
                             RoundedRectangle(cornerRadius: 10)
@@ -253,7 +242,6 @@ struct TimerView: View {
                     }
                     .frame(width: 150, height: 50)
                     
-                    // Timer Countdown
                     Text(formatTime(breakTimeRemaining))
                         .font(.system(size: 25, weight: .medium))
                         .foregroundColor(.white)
@@ -308,36 +296,52 @@ struct TimerView: View {
                 breakPulse = 1.05
             }
             
-            // Hold to Stop Pop-up
-            if isLongPressing && isTimerRunning && (selectedMode == "Work" || selectedMode == "Break") {
-                Color.black.opacity(0.3)
+            // Improved Hold to Stop Popup
+            if isTimerRunning && (selectedMode == "Work" || selectedMode == "Break") {
+                // Overlay semi-transparan (tanpa blokir interaksi)
+                Color.black.opacity(0.2)
                     .ignoresSafeArea()
+                    .allowsHitTesting(false)
                 
-                VStack {
-                    Spacer()
-                    VStack {
-                        Text("Hold to Stop \(selectedMode ?? "")")
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(.white)
+                // Popup dengan Progress Bar Memanjang
+                VStack(spacing: 15) {
+                    Text("Hold to Stop \(selectedMode ?? "")")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundColor(.white)
+                    
+                    ZStack(alignment: .leading) {
+                        RoundedRectangle(cornerRadius: 5)
+                            .fill(Color.white.opacity(0.2))
+                            .frame(width: 200, height: 10)
                         
-                        GeometryReader { geometry in
-                            ZStack(alignment: .leading) {
-                                RoundedRectangle(cornerRadius: 5)
-                                    .fill(Color.gray.opacity(0.5))
-                                    .frame(width: 200, height: 10)
-                                
-                                RoundedRectangle(cornerRadius: 5)
-                                    .fill(Color.white)
-                                    .frame(width: 200 * longPressProgress, height: 10)
+                        RoundedRectangle(cornerRadius: 5)
+                            .fill(selectedMode == "Work" ? Color.blue : Color.green)
+                            .frame(width: 200 * longPressProgress, height: 10)
+                            .animation(.linear(duration: longPressDuration), value: longPressProgress)
+                    }
+                }
+                .padding(20)
+                .background(
+                    RoundedRectangle(cornerRadius: 15)
+                        .fill(Color.black.opacity(0.8))
+                )
+                .shadow(color: .black.opacity(0.3), radius: 10, x: 0, y: 5)
+                .position(x: UIScreen.main.bounds.width / 2,
+                          y: UIScreen.main.bounds.height - 100)
+                .gesture(
+                    LongPressGesture(minimumDuration: longPressDuration)
+                        .onChanged { _ in
+                            if isTimerRunning {
+                                startLongPress()
                             }
                         }
-                        .frame(width: 200, height: 10)
-                    }
-                    .padding()
-                    .background(Color.black.opacity(0.8))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .padding(.bottom, 50)
-                }
+                        .onEnded { _ in
+                            if isTimerRunning {
+                                stopLongPress()
+                                resetToInitialState()
+                            }
+                        }
+                )
             }
         }
         .onAppear {
@@ -345,12 +349,10 @@ struct TimerView: View {
                 textOpacity = 1
                 textScale = 1
             }
-            // Load initial timer values and check for background timer
             loadTimerValues()
             checkForBackgroundTimer()
         }
         .onDisappear {
-            // Simpan state timer saat aplikasi di-kill
             saveTimerState()
         }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("TimerSetNotification"))) { _ in
@@ -371,14 +373,14 @@ struct TimerView: View {
         initialWorkTime = workTimeRemaining
         initialBreakTime = breakTimeRemaining
         
-        stopTimer() // Hentikan timer jika sedang berjalan
+        stopTimer()
     }
     
     // Fungsi untuk memulai timer
     private func startTimer() {
         guard !isTimerRunning else { return }
         isTimerRunning = true
-        timerStartDate = Date() // Simpan waktu mulai timer
+        timerStartDate = Date()
         
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             if selectedMode == "Work" {
@@ -386,7 +388,6 @@ struct TimerView: View {
                     workTimeRemaining -= 1
                 } else {
                     stopTimer()
-                    // Transisi ke Break jika Work selesai
                     withAnimation {
                         selectedMode = "Break"
                         breakScale = 1.5
@@ -407,7 +408,6 @@ struct TimerView: View {
                     breakTimeRemaining -= 1
                 } else {
                     stopTimer()
-                    // Reset ke posisi awal jika Break selesai
                     withAnimation {
                         selectedMode = nil
                         workScale = 1.0
@@ -421,7 +421,7 @@ struct TimerView: View {
                         workDurationOpacity = 0
                         breakDurationOpacity = 0
                     }
-                    loadTimerValues() // Reset timer values
+                    loadTimerValues()
                 }
             }
         }
@@ -433,7 +433,6 @@ struct TimerView: View {
         timer = nil
         isTimerRunning = false
         timerStartDate = nil
-        // Hapus state timer dari UserDefaults
         UserDefaults.standard.removeObject(forKey: "timerStartDate")
         UserDefaults.standard.removeObject(forKey: "timerMode")
         UserDefaults.standard.removeObject(forKey: "workTimeRemaining")
@@ -514,15 +513,12 @@ struct TimerView: View {
            let savedWorkTime = UserDefaults.standard.object(forKey: "workTimeRemaining") as? Int,
            let savedBreakTime = UserDefaults.standard.object(forKey: "breakTimeRemaining") as? Int {
             
-            // Hitung waktu yang telah berlalu sejak aplikasi di-kill
             let elapsedTime = Int(Date().timeIntervalSince(startDate))
             
-            // Perbarui waktu yang tersisa
             if mode == "Work" {
                 workTimeRemaining = max(0, savedWorkTime - elapsedTime)
                 breakTimeRemaining = savedBreakTime
                 if workTimeRemaining == 0 {
-                    // Jika Work selesai, lanjutkan ke Break
                     selectedMode = "Break"
                     breakScale = 1.5
                     workScale = 0.5
@@ -553,7 +549,6 @@ struct TimerView: View {
                 breakTimeRemaining = max(0, savedBreakTime - elapsedTime)
                 workTimeRemaining = savedWorkTime
                 if breakTimeRemaining == 0 {
-                    // Jika Break selesai, reset ke posisi awal
                     resetToInitialState()
                 } else {
                     selectedMode = "Break"
