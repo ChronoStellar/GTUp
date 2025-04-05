@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import Combine
+import UserNotifications
 
 struct TimerView: View {
     @State private var isAnimating: Bool = false
@@ -37,12 +39,11 @@ struct TimerView: View {
     // For long press to stop
     @State private var isLongPressing: Bool = false
     @State private var longPressProgress: CGFloat = 0.0
-    @State private var longPressTimer: Timer? = nil
-    private let longPressDuration: Double = 0.5
+    private let longPressDuration: Double = 1.0
     
     // For background timer persistence
     @State private var timerStartDate: Date? = nil
-    
+
     var body: some View {
         ZStack {
             // Background
@@ -315,9 +316,8 @@ struct TimerView: View {
                             .frame(width: 200, height: 10)
                         
                         RoundedRectangle(cornerRadius: 5)
-                            .fill(selectedMode == "Work" ? Color.blue : Color.green)
+                            .fill(Color.white) // Ubah warna menjadi putih
                             .frame(width: 200 * longPressProgress, height: 10)
-                            .animation(.linear(duration: longPressDuration), value: longPressProgress)
                     }
                 }
                 .padding(20)
@@ -332,11 +332,13 @@ struct TimerView: View {
                     LongPressGesture(minimumDuration: longPressDuration)
                         .onChanged { _ in
                             if isTimerRunning {
+                                print("Long press started on popup")
                                 startLongPress()
                             }
                         }
                         .onEnded { _ in
                             if isTimerRunning {
+                                print("Long press ended on popup")
                                 stopLongPress()
                                 resetToInitialState()
                             }
@@ -345,6 +347,15 @@ struct TimerView: View {
             }
         }
         .onAppear {
+            // Minta izin untuk notifikasi lokal
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+                if let error = error {
+                    print("Error requesting notification permission: \(error)")
+                } else {
+                    print("Notification permission granted: \(granted)")
+                }
+            }
+
             withAnimation {
                 textOpacity = 1
                 textScale = 1
@@ -382,6 +393,9 @@ struct TimerView: View {
         isTimerRunning = true
         timerStartDate = Date()
         
+        // Jadwalkan notifikasi lokal
+        scheduleNotification()
+
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             if selectedMode == "Work" {
                 if workTimeRemaining > 0 {
@@ -437,6 +451,9 @@ struct TimerView: View {
         UserDefaults.standard.removeObject(forKey: "timerMode")
         UserDefaults.standard.removeObject(forKey: "workTimeRemaining")
         UserDefaults.standard.removeObject(forKey: "breakTimeRemaining")
+        
+        // Hapus notifikasi yang tertunda
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
     }
     
     // Fungsi untuk menghitung progress
@@ -456,25 +473,23 @@ struct TimerView: View {
     
     // Fungsi untuk memulai long press
     private func startLongPress() {
+        print("startLongPress called")
         isLongPressing = true
         longPressProgress = 0.0
-        
-        longPressTimer?.invalidate()
-        longPressTimer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { timer in
-            longPressProgress += CGFloat(0.01 / longPressDuration)
-            if longPressProgress >= 1.0 {
-                longPressProgress = 1.0
-                timer.invalidate()
-            }
+
+        // Gunakan withAnimation untuk animasi sederhana
+        withAnimation(.linear(duration: longPressDuration)) {
+            longPressProgress = 1.0
         }
     }
     
     // Fungsi untuk menghentikan long press
     private func stopLongPress() {
+        print("stopLongPress called")
         isLongPressing = false
-        longPressProgress = 0.0
-        longPressTimer?.invalidate()
-        longPressTimer = nil
+        withAnimation(.linear(duration: 0.2)) {
+            longPressProgress = 0.0
+        }
     }
     
     // Fungsi untuk mereset ke posisi awal
@@ -564,6 +579,30 @@ struct TimerView: View {
                     breakDurationOpacity = 1
                     startTimer()
                 }
+            }
+        }
+    }
+    
+    // Fungsi untuk menjadwalkan notifikasi lokal
+    private func scheduleNotification() {
+        let content = UNMutableNotificationContent()
+        content.title = "\(selectedMode ?? "Timer") Finished!"
+        content.body = "Your \(selectedMode ?? "timer") has completed."
+        content.sound = UNNotificationSound.default
+
+        // Tentukan waktu notifikasi berdasarkan sisa waktu
+        let timeInterval = Double(selectedMode == "Work" ? workTimeRemaining : breakTimeRemaining)
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: timeInterval, repeats: false)
+
+        // Buat request notifikasi
+        let request = UNNotificationRequest(identifier: "\(selectedMode ?? "timer")_end", content: content, trigger: trigger)
+
+        // Tambahkan notifikasi ke UNUserNotificationCenter
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("Error scheduling notification: \(error)")
+            } else {
+                print("Notification scheduled for \(selectedMode ?? "timer")")
             }
         }
     }

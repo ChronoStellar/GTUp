@@ -13,7 +13,9 @@ struct SplashScreenView: View {
     @State private var fadeIn = false
     @State private var scale: CGFloat = 1.0
     @State private var textOpacity: Double = 0.0
-    @State private var navigateToMain = false // Untuk navigasi ke ContentView
+    @State private var navigateToMain = false // Untuk navigasi ke view berikutnya
+    @State private var hasCompletedOnboarding: Bool = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+    @State private var destinationIsTimerView: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -64,6 +66,7 @@ struct SplashScreenView: View {
             .onAppear {
                 print("SplashScreenView muncul")
                 print("isStanding awal: \(isStanding)") // Debugging state awal
+                print("Has completed onboarding: \(hasCompletedOnboarding)") // Debugging status onboarding
 
                 // Animasi saat muncul
                 withAnimation(.easeInOut(duration: 1.0)) {
@@ -80,16 +83,22 @@ struct SplashScreenView: View {
                     }
                 }
 
-                // Navigasi ke ContentView setelah animasi selesai
+                // Navigasi ke view berikutnya setelah animasi selesai
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
-                    print("Navigasi ke ContentView")
+                    print("Navigasi ke view berikutnya")
+                    destinationIsTimerView = hasCompletedOnboarding
                     navigateToMain = true
                 }
             }
-            // Navigasi ke ContentView
+            // Navigasi ke view berikutnya berdasarkan status onboarding
             .navigationDestination(isPresented: $navigateToMain) {
-                ContentView()
-                    .navigationBarBackButtonHidden(true)
+                if destinationIsTimerView {
+                    OnboardingView() //sementara untuk debug dulu harusnya dia langsung ke contentview
+                        .navigationBarBackButtonHidden(true)
+                } else {
+                    OnboardingView()
+                        .navigationBarBackButtonHidden(true)
+                }
             }
         }
     }
