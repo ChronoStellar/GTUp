@@ -16,6 +16,7 @@ enum Screen {
 }
 
 struct ContentView: View {
+    @EnvironmentObject var manager: HealthKitManager
     @State private var currentScreen: Screen = .home
     
     var body: some View {
@@ -28,7 +29,7 @@ struct ContentView: View {
                     case .profile:
                         ProfileView()
                     case .data:
-                        DataView()
+                        DataView().environmentObject(manager)
                     case .timer:
                         TimerSetView()
                     }
@@ -114,5 +115,4 @@ struct NavigationDotsView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
 }
