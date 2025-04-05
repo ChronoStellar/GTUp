@@ -69,7 +69,7 @@ struct ContentView: View {
                     VStack {
                         Spacer()
                         NavigationDotsView(currentScreen: $currentScreen)
-                            .padding(.bottom, 5) // Sesuaikan jarak dari bawah
+                            .padding(.bottom, 30) // Sesuaikan jarak dari bawah
                     }
                 }
             }
