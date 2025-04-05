@@ -15,12 +15,6 @@ struct DailyChartData: Identifiable {
     let stand: Double
 }
 
-//struct DailyStepChart: Identifiable { // delete if we use both step and stand
-//    let id = UUID()
-//    let date: Date
-//    let steps: Double
-//}
-
 extension Date{
     static var startOfDay: Date {
         Calendar.current.startOfDay(for: Date())
@@ -76,28 +70,6 @@ class HealthKitManager: ObservableObject {
         }
     }
     
-//    func fetchDailySteps(startDate: Date, completion: @escaping([DailyStepChart])->Void ) {
-//        let steps = HKQuantityType(.stepCount)
-//        let interval = DateComponents(day: 1)
-//        let query = HKStatisticsCollectionQuery(quantityType: steps, quantitySamplePredicate: nil, anchorDate: startDate, intervalComponents: interval)
-//        
-//        query.initialResultsHandler = { query, results, error in
-//            guard let results = results else {
-//                completion([])
-//                return
-//            }
-//            
-//            var dailyStepData: [DailyStepChart] = []
-//            
-//            results.enumerateStatistics(from: startDate, to: Date()) { statistics, stop in
-//                dailyStepData.append(DailyStepChart(date: statistics.startDate, steps: statistics.sumQuantity()?.doubleValue(for: .count()) ?? 0.00))
-//                }
-//            completion(dailyStepData)
-//        }
-//        healthStore.execute(query)
-//    }
-    
-    ////////////////
     func fetchDailyChartData(startDate: Date, completion: @escaping ([DailyChartData]) -> Void) {
             let steps = HKQuantityType(.stepCount)
             let standTime = HKQuantityType(.appleStandTime)

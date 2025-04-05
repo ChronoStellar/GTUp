@@ -23,17 +23,35 @@ struct DataView: View {
     @State private var selectedRange: ChartRange = .oneWeek
     
     var displayedChartData: [DailyChartData] {
+        let data: [DailyChartData]
         switch selectedRange {
         case .oneWeek:
-            return Array(manager.oneMonthChartData.suffix(7))
-        case .threeWeek:
-            return Array(manager.oneMonthChartData.suffix(21))
-        case .oneMonth:
-            return manager.oneMonthChartData
+            data = Array(manager.oneMonthChartData.suffix(7))
         case .twoMonth:
-            return Array(manager.oneMonthChartData.suffix(14))
+            data = Array(manager.oneMonthChartData.suffix(14))
+        case .threeWeek:
+            data = Array(manager.oneMonthChartData.suffix(21))
         case .fourWeek:
-            return Array(manager.oneMonthChartData.suffix(28))
+            data = Array(manager.oneMonthChartData.suffix(28))
+        case .oneMonth:
+            data = manager.oneMonthChartData
+        }
+        print("Selected Range: \(selectedRange.rawValue), Data Count: \(data.count), Data: \(data.map { "\($0.date): \($0.steps) steps, \($0.stand) stand" })")
+        return data
+    }
+    private func startDate(for range: ChartRange) -> Date {
+        let calendar = Calendar.current
+        switch range {
+        case .oneWeek:
+            return calendar.date(byAdding: .day, value: -7, to: Date())!
+        case .twoMonth:
+            return calendar.date(byAdding: .day, value: -14, to: Date())!
+        case .threeWeek:
+            return calendar.date(byAdding: .day, value: -21, to: Date())!
+        case .fourWeek:
+            return calendar.date(byAdding: .day, value: -28, to: Date())!
+        case .oneMonth:
+            return calendar.date(byAdding: .month, value: -1, to: Date())!
         }
     }
     
@@ -86,10 +104,10 @@ struct DataView: View {
                                             .foregroundStyle(.tetriaryApp)
                                         }
                                     }
+                                    .chartXScale(domain: [startDate(for: selectedRange), Date()])
                                     .chartXAxis { AxisMarks { _ in } }
                                     .chartYAxis { AxisMarks { _ in } }
                                     .frame(width: 150, height: 200)
-//                                    .background(.white)
                                     .padding(10)
                                 } else if item.key == "todayStand" {
                                     Chart {
@@ -101,6 +119,7 @@ struct DataView: View {
                                             .foregroundStyle(.tetriaryApp)
                                         }
                                     }
+                                    .chartXScale(domain: [startDate(for: selectedRange), Date()])
                                     .chartXAxis { AxisMarks { _ in } }
                                     .chartYAxis { AxisMarks { _ in } }
                                     .frame(width: 150, height: 200)

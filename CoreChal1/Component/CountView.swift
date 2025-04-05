@@ -22,9 +22,11 @@ struct CountView: View {
             Text(activity.title)
                 .font(.system(size: 22, weight: .bold, design: .default))
                 .foregroundColor(.fontApp)
+                .lineLimit(1)
             Text("\(activity.ammount) \(activity.metric)")
-                .font(.system(size: 32, weight: .regular, design: .default))
+                .font(.system(size: 28, weight: .regular, design: .default))
                 .foregroundColor(.fontApp)
+                .lineLimit(2)
         }
         .frame(width: 150, height: 100)
     }
