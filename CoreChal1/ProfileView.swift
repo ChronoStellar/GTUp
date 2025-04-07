@@ -200,7 +200,7 @@ struct ProfileView: View {
                                         .padding()
                                 }
                             }
-                            Text("Notifications View")
+                            Text("Notifications")
                                 .foregroundColor(.white)
                             Spacer()
                         }
@@ -222,7 +222,7 @@ struct ProfileView: View {
                                         .padding()
                                 }
                             }
-                            Text("Research Studies View")
+                            Text("Research Studies")
                                 .foregroundColor(.white)
                             Spacer()
                         }
@@ -232,7 +232,7 @@ struct ProfileView: View {
                     ZStack {
                         Color.black
                             .ignoresSafeArea()
-                        VStack {
+                        VStack(spacing: 20) {
                             HStack {
                                 Spacer()
                                 Button(action: {
@@ -244,13 +244,55 @@ struct ProfileView: View {
                                         .padding()
                                 }
                             }
-                            Text("Devices View")
+                            
+                            Text("Connected Devices")
+                                .font(.system(size: 30, weight: .bold))
                                 .foregroundColor(.white)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal)
+                            
+                            List {
+                                HStack {
+                                    VStack(alignment: .leading) {
+                                        Text("iPhone 15")
+                                            .foregroundColor(.white)
+                                        Text("Last synced: Today, 14:30")
+                                            .font(.footnote)
+                                            .foregroundColor(.white.opacity(0.7))
+                                    }
+                                    Spacer()
+                                    Text("Connected")
+                                        .foregroundColor(.green)
+                                }
+                                .listRowBackground(Color.black)
+                                
+                                HStack {
+                                    VStack(alignment: .leading) {
+                                        Text("Apple Watch Series 10")
+                                            .foregroundColor(.white)
+                                        Text("Last synced: Today, 14:25")
+                                            .font(.footnote)
+                                            .foregroundColor(.white.opacity(0.7))
+                                    }
+                                    Spacer()
+                                    Text("Connected")
+                                        .foregroundColor(.green)
+                                }
+                                .listRowBackground(Color.black)
+                            }
+                            .listStyle(PlainListStyle())
+                            .scrollContentBackground(.hidden)
+                            
+                            Text("These devices are currently linked to your account.")
+                                .font(.footnote)
+                                .foregroundColor(.white.opacity(0.7))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal)
+                            
                             Spacer()
                         }
                     }
                 }
-                // Updated Apps sheet with additional text
                 .sheet(isPresented: $showingApps) {
                     ZStack {
                         Color.black
@@ -274,10 +316,31 @@ struct ProfileView: View {
                                 .padding(.horizontal)
                             
                             Text("Manage your connected applications here.")
-                                .font(.system(size: 18))
+                                .font(.system(size: 16))
                                 .foregroundColor(.white.opacity(0.7))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.horizontal)
+                            
+                            List {
+                                HStack {
+                                    Image(systemName: "heart.fill")
+                                        .foregroundColor(.red)
+                                        .frame(width: 30, height: 30)
+                                    VStack(alignment: .leading) {
+                                        Text("Health")
+                                            .foregroundColor(.white)
+                                        Text("Access: Heart Rate, Steps, Stand Hours")
+                                            .font(.footnote)
+                                            .foregroundColor(.white.opacity(0.7))
+                                    }
+//                                    Spacer()
+//                                    Text("Connected")
+//                                        .foregroundColor(.green)
+                                }
+                                .listRowBackground(Color.gray.opacity(0.2))
+                            }
+                            .listStyle(PlainListStyle())
+                            .scrollContentBackground(.hidden)
                             
                             Text("You can view, add, or remove apps that have access to your data.")
                                 .font(.footnote)
