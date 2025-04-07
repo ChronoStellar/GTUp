@@ -40,6 +40,7 @@ struct TimerView: View {
     @State private var isLongPressing: Bool = false
     @State private var longPressProgress: CGFloat = 0.0
     private let longPressDuration: Double = 1.0
+    @State var longPressTime = 0.0
     
     // For background timer persistence
     @State private var timerStartDate: Date? = nil
@@ -47,7 +48,7 @@ struct TimerView: View {
     var body: some View {
         ZStack {
             // Background
-            Color.primary
+            Color.primaryApp
                 .ignoresSafeArea()
             
             // Curved Line
@@ -303,7 +304,9 @@ struct TimerView: View {
                 Color.black.opacity(0.2)
                     .ignoresSafeArea()
                     .allowsHitTesting(false)
-                
+                ProgressView(value: longPressTime, total: 10) {
+                    Text("progress")
+                }
                 // Popup dengan Progress Bar Memanjang
                 VStack(spacing: 15) {
                     Text("Hold to Stop \(selectedMode ?? "")")

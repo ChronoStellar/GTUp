@@ -411,7 +411,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"CoreChal1/Preview Content\"";
-				DEVELOPMENT_TEAM = 8K59B5RZ46;
+				DEVELOPMENT_TEAM = 476954S3MU;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Please allow access to health app to let our app function properly";
@@ -442,7 +442,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"CoreChal1/Preview Content\"";
-				DEVELOPMENT_TEAM = 8K59B5RZ46;
+				DEVELOPMENT_TEAM = 476954S3MU;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Please allow access to health app to let our app function properly";

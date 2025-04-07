@@ -18,52 +18,67 @@ enum Screen {
 struct ContentView: View {
     @EnvironmentObject var manager: HealthKitManager
     @State private var currentScreen: Screen = .home
+    @State private var tabIndex: Int = 1 // Index untuk TabView: 0 = timer, 1 = home, 2 = data
+    @State private var isProfileVisible: Bool = false // Untuk mengontrol visibilitas layar profile
+    
+    // Urutan layar untuk TabView (hanya untuk timer, home, data)
+    private let tabScreens: [Screen] = [.timer, .home, .data]
     
     var body: some View {
         NavigationStack {
             ZStack {
-                VStack {
-                    switch currentScreen {
-                    case .home:
-                        TimerView()
-                    case .profile:
-                        ProfileView()
-                    case .data:
-                        DataView().environmentObject(manager)
-                    case .timer:
-                        TimerSetView()
-                    }
+                // TabView untuk swipe kiri-kanan antar layar timer, home, dan data
+                TabView(selection: $tabIndex) {
+                    TimerSetView()
+                        .tag(0)
+                    
+                    TimerView()
+                        .tag(1)
+                    
+                    DataView()
+                        .environmentObject(manager)
+                        .tag(2)
                 }
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never)) // Gaya carousel tanpa indikator bawaan
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(backgroundColor)
+                .onChange(of: tabIndex) { newIndex in
+                    // Update currentScreen berdasarkan tabIndex
+                    currentScreen = tabScreens[newIndex]
+                }
                 .gesture(
                     DragGesture()
                         .onEnded { value in
-                            switch currentScreen {
-                            case .home:
-                                if value.translation.width < -100 {
-                                    currentScreen = .data // Geser kiri dari Home ke Data
-                                } else if value.translation.width > 100 {
-                                    currentScreen = .timer // Geser kanan dari Home ke Timer
-                                } else if value.translation.height < -100 {
-                                    currentScreen = .profile // Geser atas dari Home ke Profile
-                                }
-                            case .timer:
-                                if value.translation.width < -100 {
-                                    currentScreen = .home // Geser kiri dari Timer ke Home
-                                }
-                            case .data:
-                                if value.translation.width > 100 {
-                                    currentScreen = .home // Geser kanan dari Data ke Home
-                                }
-                            case .profile:
-                                if value.translation.height > 100 {
-                                    currentScreen = .home // Geser bawah dari Profile ke Home
+                            // Hanya aktifkan gesture atas/bawah jika tidak ada modal lain yang terbuka
+                            if value.translation.height < -100 && currentScreen != .profile {
+                                // Geser ke atas dari layar apapun (kecuali profile) ke profile
+                                withAnimation(.spring()) {
+                                    isProfileVisible = true
+                                    currentScreen = .profile
                                 }
                             }
                         }
                 )
-                .animation(.easeInOut, value: currentScreen)
+                
+                // Layar Profile sebagai overlay
+                if isProfileVisible {
+                    ProfileView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(backgroundColor)
+                        .gesture(
+                            DragGesture()
+                                .onEnded { value in
+                                    if value.translation.height > 100 {
+                                        // Geser ke bawah dari profile ke layar sebelumnya
+                                        withAnimation(.spring()) {
+                                            isProfileVisible = false
+                                            // Kembalikan ke layar yang sesuai dengan tabIndex
+                                            currentScreen = tabScreens[tabIndex]
+                                        }
+                                    }
+                                }
+                        )
+                }
                 
                 // Navigation Dots di bagian bawah (hanya untuk .timer, .home, .data)
                 if currentScreen != .profile {
@@ -80,10 +95,10 @@ struct ContentView: View {
     
     private var backgroundColor: Color {
         switch currentScreen {
-        case .home: return Color.primary
-        case .profile: return Color.primary
-        case .data: return Color.primary
-        case .timer: return Color.primary
+        case .home: return Color.primaryApp
+        case .profile: return Color.primaryApp
+        case .data: return Color.primaryApp
+        case .timer: return Color.primaryApp
         }
     }
 }
@@ -100,8 +115,8 @@ struct NavigationDotsView: View {
             ForEach(screens, id: \.self) { screen in
                 Circle()
                     .frame(width: 10, height: 25)
-                    .foregroundColor(currentScreen == screen ? .black : .gray.opacity(0.7)) // Hitam untuk aktif, abu-abu tua untuk tidak aktif
-                    .animation(.easeInOut, value: currentScreen)
+                    .foregroundColor(currentScreen == screen ? .primaryApp : .gray.opacity(0.7)) // Hitam untuk aktif, abu-abu tua untuk tidak aktif
+                    .animation(.spring(), value: currentScreen)
             }
         }
         .padding(.vertical, 2) // Padding vertikal untuk kapsul
@@ -115,4 +130,5 @@ struct NavigationDotsView: View {
 
 #Preview {
     ContentView()
+        .environmentObject(HealthKitManager()) // Tambahkan environmentObject untuk preview
 }

@@ -36,7 +36,7 @@ struct ProfileView: View {
     
     var body: some View {
         ZStack {
-            Color.black
+            Color.primaryApp
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
@@ -127,7 +127,7 @@ struct ProfileView: View {
                             }
                         }
                     }
-                    .listRowBackground(Color.black)
+                    .listRowBackground(Color.primaryApp)
                     
                     Section(header: Text("Privacy")
                         .font(.system(size: 25, weight: .bold))
@@ -177,7 +177,7 @@ struct ProfileView: View {
                             .padding(.bottom, 20)
                             .multilineTextAlignment(.leading)
                     }
-                    .listRowBackground(Color.black)
+                    .listRowBackground(Color.primaryApp)
                 }
                 .listStyle(InsetGroupedListStyle())
                 .scrollContentBackground(.hidden)
@@ -186,7 +186,7 @@ struct ProfileView: View {
                 // Existing sheets
                 .sheet(isPresented: $showingNotifications) {
                     ZStack {
-                        Color.black
+                        Color.primaryApp
                             .ignoresSafeArea()
                         VStack {
                             HStack {
@@ -208,7 +208,7 @@ struct ProfileView: View {
                 }
                 .sheet(isPresented: $showingResearchStudies) {
                     ZStack {
-                        Color.black
+                        Color.primaryApp
                             .ignoresSafeArea()
                         VStack {
                             HStack {
@@ -230,7 +230,7 @@ struct ProfileView: View {
                 }
                 .sheet(isPresented: $showingDevices) {
                     ZStack {
-                        Color.black
+                        Color.primaryApp
                             .ignoresSafeArea()
                         VStack(spacing: 20) {
                             HStack {
@@ -264,7 +264,7 @@ struct ProfileView: View {
                                     Text("Connected")
                                         .foregroundColor(.green)
                                 }
-                                .listRowBackground(Color.black)
+                                .listRowBackground(Color.primaryApp)
                                 
                                 HStack {
                                     VStack(alignment: .leading) {
@@ -278,7 +278,7 @@ struct ProfileView: View {
                                     Text("Connected")
                                         .foregroundColor(.green)
                                 }
-                                .listRowBackground(Color.black)
+                                .listRowBackground(Color.primaryApp)
                             }
                             .listStyle(PlainListStyle())
                             .scrollContentBackground(.hidden)
@@ -295,7 +295,7 @@ struct ProfileView: View {
                 }
                 .sheet(isPresented: $showingApps) {
                     ZStack {
-                        Color.black
+                        Color.primaryApp
                             .ignoresSafeArea()
                         VStack(spacing: 20) {
                             HStack {

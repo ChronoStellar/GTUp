@@ -69,7 +69,7 @@ struct TimerSetView: View {
     
     var body: some View {
         ZStack {
-            Color.primary
+            Color.primaryApp
                 .ignoresSafeArea()
             
             VStack(spacing: 20) {
