@@ -7,31 +7,36 @@
 
 import SwiftUI
 
-struct Activity{
-    let id: Int
-    let title: String
-    let ammount: String
-    let metric: String
-}
-
 struct CountView: View {
-    @State var activity: Activity
+    let image: String
+    let type: String
     
     var body: some View {
-        VStack(alignment : .leading) {
-            Text(activity.title)
-                .font(.system(size: 22, weight: .bold, design: .default))
-                .foregroundColor(.fontApp)
-                .lineLimit(1)
-            Text("\(activity.ammount) \(activity.metric)")
-                .font(.system(size: 28, weight: .regular, design: .default))
-                .foregroundColor(.fontApp)
-                .lineLimit(2)
+        ZStack {
+            Color(uiColor: .secondaryApp)
+            VStack(alignment: .leading){
+                Text(type)
+                    .font(.headline)
+                    .foregroundColor(.fontApp)
+                HStack {
+                    Image(image)
+                        .resizable()
+                        .frame(width: 100, height: 100)
+                        .foregroundColor(.white)
+                    Spacer()
+                    VStack(alignment: .trailing){
+                        Text("You've bla bla bla").foregroundColor(.fontApp)
+                        Text("1 hours").foregroundColor(.fontApp)
+                    }
+                }
+            }
+            .padding(20)
         }
-        .frame(width: 150, height: 100)
+        .frame(width: 350, height: 150)
+        .cornerRadius(20)
     }
 }
 
 #Preview {
-    CountView(activity: Activity(id: 0, title: "STEPS", ammount: "12", metric: "step"))
+    CountView(image: "Work", type: "Work")
 }

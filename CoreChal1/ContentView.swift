@@ -16,7 +16,17 @@ enum Screen {
 }
 
 struct ContentView: View {
+    //move to onboarding if app calls onboarding first
     @EnvironmentObject var manager: HealthKitManager
+    @Environment(\.modelContext) private var modelContext
+    @Query private var breaks: [Break]
+    
+    init() {
+        let today = Calendar.current.startOfDay(for: Date())
+        _breaks = Query(filter: #Predicate<Break> { $0.date == today })
+    }
+    
+    
     @State private var currentScreen: Screen = .home
     @State private var tabIndex: Int = 1 // Index untuk TabView: 0 = timer, 1 = home, 2 = data
     @State private var isProfileVisible: Bool = false // Untuk mengontrol visibilitas layar profile
@@ -26,6 +36,16 @@ struct ContentView: View {
     // Urutan layar untuk TabView (hanya untuk timer, home, data)
     private let tabScreens: [Screen] = [.timer, .home, .data]
     
+    private var latestBreak: Break {
+        if let lastBreak = breaks.last {
+            return lastBreak
+        } else {
+            let newBreak = Break(date: Date(), stepCounter: 0, breakCounter: 0)
+            modelContext.insert(newBreak)
+            return newBreak
+        }
+    }
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -34,10 +54,10 @@ struct ContentView: View {
                     TimerSetView()
                         .tag(0)
                     
-                    TimerView()
+                    TimerView(breakRecord: latestBreak)
                         .tag(1)
                     
-                    DataView()
+                    TestView()
                         .environmentObject(manager)
                         .tag(2)
                 }

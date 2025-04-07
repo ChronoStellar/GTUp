@@ -14,7 +14,10 @@ struct CoreChal1App: App {
     var body: some Scene {
         WindowGroup {
 //            SplashScreenView() // Atur SplashScreenView sebagai view awal
-            ContentView().environmentObject(manager)
+            ContentView()
+                .environmentObject(manager)
+//            TestView()
+                .modelContainer(for: Break.self)
         }
     }
 }
