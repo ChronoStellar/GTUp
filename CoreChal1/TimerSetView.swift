@@ -18,8 +18,14 @@ struct TimerSetView: View {
     @State private var tempBreakMinutes: Int = 5
     @State private var showTimePicker: Bool = false
     @State private var showBreakPicker: Bool = false
-    @State private var showAlert: Bool = false
-    @State private var showErrorAlert: Bool = false // Alert untuk error waktu 0 detik
+    
+    // Ganti dua state alert dengan satu state menggunakan enum
+    enum AlertType {
+        case success
+        case error
+        case none
+    }
+    @State private var alertType: AlertType = .none
     
     @State private var selectedLabel: String = "None"
     @State private var labels: [String] = ["None", "Work", "Study", "Exercise"]
@@ -118,11 +124,14 @@ struct TimerSetView: View {
                 Button(action: {
                     // Hitung total waktu dalam detik
                     let totalSeconds = (hours * 3600) + (minutes * 60) + seconds
+                    print("Total seconds: \(totalSeconds)") // Debugging
                     
                     // Validasi: Pastikan total waktu minimal 1 detik
                     if totalSeconds < 1 {
-                        showErrorAlert = true // Tampilkan alert error
+                        print("Timer invalid, setting alertType to error") // Debugging
+                        alertType = .error // Set tipe alert ke error
                     } else {
+                        print("Timer valid, saving to UserDefaults") // Debugging
                         // Simpan ke UserDefaults
                         UserDefaults.standard.set(hours, forKey: "timerHours")
                         UserDefaults.standard.set(minutes, forKey: "timerMinutes")
@@ -136,7 +145,8 @@ struct TimerSetView: View {
                         // Kirim notifikasi ke TimerView
                         NotificationCenter.default.post(name: NSNotification.Name("TimerSetNotification"), object: nil)
                         
-                        showAlert = true
+                        print("Setting alertType to success") // Debugging
+                        alertType = .success // Set tipe alert ke success
                     }
                 }) {
                     Text("Set")
@@ -148,19 +158,27 @@ struct TimerSetView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
                 .padding(.horizontal)
-                .alert(isPresented: $showAlert) {
-                    Alert(
-                        title: Text("Timer Ready!"),
-                        message: Text("Your timer has been set successfully. Let's get to work!"),
-                        dismissButton: .default(Text("OK"))
-                    )
-                }
-                .alert(isPresented: $showErrorAlert) {
-                    Alert(
-                        title: Text("Invalid Timer"),
-                        message: Text("Please set the timer to at least 1 second."),
-                        dismissButton: .default(Text("OK"))
-                    )
+                .alert(isPresented: Binding<Bool>(
+                    get: { alertType != .none },
+                    set: { _ in alertType = .none }
+                )) {
+                    print("Showing alert, type: \(alertType)") // Debugging
+                    switch alertType {
+                    case .success:
+                        return Alert(
+                            title: Text("Timer Ready!"),
+                            message: Text("Your timer has been set successfully. Let's get to work!"),
+                            dismissButton: .default(Text("OK"))
+                        )
+                    case .error:
+                        return Alert(
+                            title: Text("Invalid Timer"),
+                            message: Text("Please set the timer to at least 1 second."),
+                            dismissButton: .default(Text("OK"))
+                        )
+                    case .none:
+                        return Alert(title: Text("")) // Tidak akan dipanggil
+                    }
                 }
                 
                 VStack(spacing: 0) {
