@@ -13,12 +13,13 @@ struct TimerSetView: View {
     @State private var seconds: Int
     @State private var breakMinutes: Int
     @State private var tempHours: Int = 0
-    @State private var tempMinutes: Int = 0
+    @State private var tempMinutes: Int = 5
     @State private var tempSeconds: Int = 0
     @State private var tempBreakMinutes: Int = 5
     @State private var showTimePicker: Bool = false
     @State private var showBreakPicker: Bool = false
     @State private var showAlert: Bool = false
+    @State private var showErrorAlert: Bool = false // Alert untuk error waktu 0 detik
     
     @State private var selectedLabel: String = "None"
     @State private var labels: [String] = ["None", "Work", "Study", "Exercise"]
@@ -33,14 +34,23 @@ struct TimerSetView: View {
     @State private var vibrateOn: Bool = true
     
     init() {
+        // Ambil nilai dari UserDefaults
         let savedHours = UserDefaults.standard.integer(forKey: "timerHours")
         let savedMinutes = UserDefaults.standard.integer(forKey: "timerMinutes")
         let savedSeconds = UserDefaults.standard.integer(forKey: "timerSeconds")
         let savedBreakMinutes = UserDefaults.standard.integer(forKey: "breakMinutes")
         
-        _hours = State(initialValue: savedHours)
-        _minutes = State(initialValue: savedMinutes)
-        _seconds = State(initialValue: savedSeconds)
+        // Jika UserDefaults belum memiliki nilai (aplikasi baru diunduh), set default work time ke 5 menit
+        if savedHours == 0 && savedMinutes == 0 && savedSeconds == 0 {
+            _hours = State(initialValue: 0)
+            _minutes = State(initialValue: 5) // Default 5 menit
+            _seconds = State(initialValue: 0)
+        } else {
+            _hours = State(initialValue: savedHours)
+            _minutes = State(initialValue: savedMinutes)
+            _seconds = State(initialValue: savedSeconds)
+        }
+        
         _breakMinutes = State(initialValue: savedBreakMinutes != 0 ? savedBreakMinutes : 5)
         
         if let savedLabels = UserDefaults.standard.array(forKey: "labels") as? [String] {
@@ -106,19 +116,28 @@ struct TimerSetView: View {
                 .padding(.horizontal)
                 
                 Button(action: {
-                    UserDefaults.standard.set(hours, forKey: "timerHours")
-                    UserDefaults.standard.set(minutes, forKey: "timerMinutes")
-                    UserDefaults.standard.set(seconds, forKey: "timerSeconds")
-                    UserDefaults.standard.set(breakMinutes, forKey: "breakMinutes")
-                    UserDefaults.standard.set(selectedLabel, forKey: "timerLabel")
-                    UserDefaults.standard.set(selectedTimerEndOption, forKey: "timerEndOption")
+                    // Hitung total waktu dalam detik
+                    let totalSeconds = (hours * 3600) + (minutes * 60) + seconds
                     
-                    print("Timer set: \(hours)h \(minutes)m \(seconds)s, Break: \(breakMinutes)m, Label: \(selectedLabel), When Timer Ends: \(selectedTimerEndOption)")
-                    
-                    // Kirim notifikasi ke TimerView
-                    NotificationCenter.default.post(name: NSNotification.Name("TimerSetNotification"), object: nil)
-                    
-                    showAlert = true
+                    // Validasi: Pastikan total waktu minimal 1 detik
+                    if totalSeconds < 1 {
+                        showErrorAlert = true // Tampilkan alert error
+                    } else {
+                        // Simpan ke UserDefaults
+                        UserDefaults.standard.set(hours, forKey: "timerHours")
+                        UserDefaults.standard.set(minutes, forKey: "timerMinutes")
+                        UserDefaults.standard.set(seconds, forKey: "timerSeconds")
+                        UserDefaults.standard.set(breakMinutes, forKey: "breakMinutes")
+                        UserDefaults.standard.set(selectedLabel, forKey: "timerLabel")
+                        UserDefaults.standard.set(selectedTimerEndOption, forKey: "timerEndOption")
+                        
+                        print("Timer set: \(hours)h \(minutes)m \(seconds)s, Break: \(breakMinutes)m, Label: \(selectedLabel), When Timer Ends: \(selectedTimerEndOption)")
+                        
+                        // Kirim notifikasi ke TimerView
+                        NotificationCenter.default.post(name: NSNotification.Name("TimerSetNotification"), object: nil)
+                        
+                        showAlert = true
+                    }
                 }) {
                     Text("Set")
                         .font(.system(size: 18, weight: .bold))
@@ -133,6 +152,13 @@ struct TimerSetView: View {
                     Alert(
                         title: Text("Timer Ready!"),
                         message: Text("Your timer has been set successfully. Let's get to work!"),
+                        dismissButton: .default(Text("OK"))
+                    )
+                }
+                .alert(isPresented: $showErrorAlert) {
+                    Alert(
+                        title: Text("Invalid Timer"),
+                        message: Text("Please set the timer to at least 1 second."),
                         dismissButton: .default(Text("OK"))
                     )
                 }
@@ -226,7 +252,7 @@ struct TimerSetView: View {
                     
                     HStack(spacing: 0) {
                         Picker("Hours", selection: $tempHours) {
-                            ForEach(0..<24) { hour in
+                            ForEach(0..<9) { hour in
                                 Text("\(hour)h").tag(hour)
                             }
                         }
