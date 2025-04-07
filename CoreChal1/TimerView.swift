@@ -301,9 +301,7 @@ struct TimerView: View {
             // Improved Hold to Stop Popup
             if isTimerRunning && (selectedMode == "Work" || selectedMode == "Break") {
                 // Overlay semi-transparan (tanpa blokir interaksi)
-                Color.black.opacity(0.3)
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
+
 //                ProgressView(value: longPressTime, total: 10) {
 //                    Text("progress")
 //                }
