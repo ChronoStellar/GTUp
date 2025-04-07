@@ -250,13 +250,14 @@ struct TimerSetView: View {
                 Color.primaryApp.opacity(0.7) // Overlay dengan efek blur
                     .background(.ultraThinMaterial)
                     .ignoresSafeArea()
+                    .environment(\.colorScheme, .dark) // Memaksa overlay menggunakan dark mode
                 
                 VStack {
                     HStack {
                         Button("Cancel") {
                             showTimePicker = false
                         }
-                        .foregroundColor(.red) // Warna lebih lembut untuk tombol Cancel
+                        .foregroundColor(.red) // Warna tombol Cancel sesuai dark mode
                         
                         Spacer()
                         
@@ -266,7 +267,7 @@ struct TimerSetView: View {
                             seconds = tempSeconds
                             showTimePicker = false
                         }
-                        .foregroundColor(.blue.opacity(0.8)) // Warna lebih lembut untuk tombol Done
+                        .foregroundColor(.blue.opacity(0.8)) // Warna tombol Done sesuai dark mode
                     }
                     .padding()
                     
@@ -305,6 +306,7 @@ struct TimerSetView: View {
                 .background(.ultraThinMaterial) // Efek blur untuk latar belakang modal
                 .clipShape(RoundedRectangle(cornerRadius: 20))
                 .padding()
+                .environment(\.colorScheme, .dark) // Memaksa modal menggunakan dark mode
             }
             
             // Break Picker
@@ -312,13 +314,14 @@ struct TimerSetView: View {
                 Color.primaryApp.opacity(0.7) // Overlay dengan efek blur
                     .background(.ultraThinMaterial)
                     .ignoresSafeArea()
+                    .environment(\.colorScheme, .dark) // Memaksa overlay menggunakan dark mode
                 
                 VStack {
                     HStack {
                         Button("Cancel") {
                             showBreakPicker = false
                         }
-                        .foregroundColor(.red) // Warna lebih lembut untuk tombol Cancel
+                        .foregroundColor(.red) // Warna tombol Cancel sesuai dark mode
                         
                         Spacer()
                         
@@ -326,7 +329,7 @@ struct TimerSetView: View {
                             breakMinutes = tempBreakMinutes
                             showBreakPicker = false
                         }
-                        .foregroundColor(.blue.opacity(0.8)) // Warna lebih lembut untuk tombol Done
+                        .foregroundColor(.blue.opacity(0.8)) // Warna tombol Done sesuai dark mode
                     }
                     .padding()
                     
@@ -345,6 +348,7 @@ struct TimerSetView: View {
                 .background(.ultraThinMaterial) // Efek blur untuk latar belakang modal
                 .clipShape(RoundedRectangle(cornerRadius: 20))
                 .padding()
+                .environment(\.colorScheme, .dark) // Memaksa modal menggunakan dark mode
             }
             
             // Label Picker
@@ -352,20 +356,21 @@ struct TimerSetView: View {
                 Color.primaryApp.opacity(0.7) // Overlay dengan efek blur
                     .background(.ultraThinMaterial)
                     .ignoresSafeArea()
+                    .environment(\.colorScheme, .dark) // Memaksa overlay menggunakan dark mode
                 
                 VStack {
                     HStack {
                         Button("Cancel") {
                             showLabelPicker = false
                         }
-                        .foregroundColor(.red) // Warna lebih lembut untuk tombol Cancel
+                        .foregroundColor(.red) // Warna tombol Cancel sesuai dark mode
                         
                         Spacer()
                         
                         Button("Done") {
                             showLabelPicker = false
                         }
-                        .foregroundColor(.blue.opacity(0.8)) // Warna lebih lembut untuk tombol Done
+                        .foregroundColor(.blue.opacity(0.8)) // Warna tombol Done sesuai dark mode
                     }
                     .padding()
                     
@@ -429,6 +434,7 @@ struct TimerSetView: View {
                 .background(.ultraThinMaterial) // Efek blur untuk latar belakang modal
                 .clipShape(RoundedRectangle(cornerRadius: 20))
                 .padding()
+                .environment(\.colorScheme, .dark) // Memaksa modal menggunakan dark mode
             }
             
             // Add Label Modal
@@ -436,6 +442,7 @@ struct TimerSetView: View {
                 Color.primaryApp.opacity(0.7) // Overlay dengan efek blur
                     .background(.ultraThinMaterial)
                     .ignoresSafeArea()
+                    .environment(\.colorScheme, .dark) // Memaksa overlay menggunakan dark mode
                 
                 VStack {
                     HStack {
@@ -443,7 +450,7 @@ struct TimerSetView: View {
                             newLabel = ""
                             showAddLabelModal = false
                         }
-                        .foregroundColor(.red) // Warna lebih lembut untuk tombol Cancel
+                        .foregroundColor(.red) // Warna tombol Cancel sesuai dark mode
                         
                         Spacer()
                         
@@ -457,7 +464,7 @@ struct TimerSetView: View {
                             newLabel = ""
                             showAddLabelModal = false
                         }
-                        .foregroundColor(.blue.opacity(0.8)) // Warna lebih lembut untuk tombol Done
+                        .foregroundColor(.blue.opacity(0.8)) // Warna tombol Done sesuai dark mode
                     }
                     .padding()
                     
@@ -472,6 +479,7 @@ struct TimerSetView: View {
                 .background(.ultraThinMaterial) // Efek blur untuk latar belakang modal
                 .clipShape(RoundedRectangle(cornerRadius: 20))
                 .padding()
+                .environment(\.colorScheme, .dark) // Memaksa modal menggunakan dark mode
             }
             
             // When Timer Ends Picker Modal
@@ -479,20 +487,21 @@ struct TimerSetView: View {
                 Color.primaryApp.opacity(0.7) // Overlay dengan efek blur
                     .background(.ultraThinMaterial)
                     .ignoresSafeArea()
+                    .environment(\.colorScheme, .dark) // Memaksa overlay menggunakan dark mode
                 
                 VStack {
                     HStack {
                         Button("Cancel") {
                             showTimerEndPicker = false
                         }
-                        .foregroundColor(.red) // Warna lebih lembut untuk tombol Cancel
+                        .foregroundColor(.red) // Warna tombol Cancel sesuai dark mode
                         
                         Spacer()
                         
                         Button("Done") {
                             showTimerEndPicker = false
                         }
-                        .foregroundColor(.blue.opacity(0.8)) // Warna lebih lembut untuk tombol Done
+                        .foregroundColor(.blue.opacity(0.8)) // Warna tombol Done sesuai dark mode
                     }
                     .padding()
                     
@@ -511,6 +520,7 @@ struct TimerSetView: View {
                 .background(.ultraThinMaterial) // Efek blur untuk latar belakang modal
                 .clipShape(RoundedRectangle(cornerRadius: 20))
                 .padding()
+                .environment(\.colorScheme, .dark) // Memaksa modal menggunakan dark mode
             }
         }
     }
