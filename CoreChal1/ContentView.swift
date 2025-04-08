@@ -20,6 +20,8 @@ struct ContentView: View {
     @State private var currentScreen: Screen = .home
     @State private var tabIndex: Int = 1 // Index untuk TabView: 0 = timer, 1 = home, 2 = data
     @State private var isProfileVisible: Bool = false // Untuk mengontrol visibilitas layar profile
+    @State private var profileDragOffset: CGFloat = UIScreen.main.bounds.height // Offset awal di luar layar (bawah)
+    @GestureState private var dragState: CGFloat = 0 // Melacak posisi drag secara real-time
     
     // Urutan layar untuk TabView (hanya untuk timer, home, data)
     private let tabScreens: [Screen] = [.timer, .home, .data]
@@ -48,37 +50,65 @@ struct ContentView: View {
                 }
                 .gesture(
                     DragGesture()
+                        .updating($dragState) { value, state, _ in
+                            // Hanya aktifkan drag ke atas jika layar profile belum terlihat
+                            if !isProfileVisible {
+                                state = min(0, value.translation.height) // Hanya izinkan drag ke atas (negatif)
+                            }
+                        }
                         .onEnded { value in
                             // Hanya aktifkan gesture atas/bawah jika tidak ada modal lain yang terbuka
                             if value.translation.height < -100 && currentScreen != .profile {
                                 // Geser ke atas dari layar apapun (kecuali profile) ke profile
-                                withAnimation(.spring()) {
+                                withAnimation(.easeInOut(duration: 0.3)) { // Animasi mirip carousel
                                     isProfileVisible = true
                                     currentScreen = .profile
+                                    profileDragOffset = 0 // Posisi akhir (layar penuh)
+                                }
+                            } else {
+                                // Kembalikan ke posisi awal jika tidak cukup swipe
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    profileDragOffset = UIScreen.main.bounds.height
                                 }
                             }
                         }
                 )
                 
                 // Layar Profile sebagai overlay
-                if isProfileVisible {
-                    ProfileView()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(backgroundColor)
-                        .gesture(
-                            DragGesture()
-                                .onEnded { value in
-                                    if value.translation.height > 100 {
-                                        // Geser ke bawah dari profile ke layar sebelumnya
-                                        withAnimation(.spring()) {
-                                            isProfileVisible = false
-                                            // Kembalikan ke layar yang sesuai dengan tabIndex
-                                            currentScreen = tabScreens[tabIndex]
-                                        }
+                ProfileView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(backgroundColor)
+                    .offset(y: isProfileVisible ? profileDragOffset + dragState : UIScreen.main.bounds.height + dragState)
+                    .gesture(
+                        DragGesture()
+                            .updating($dragState) { value, state, _ in
+                                // Hanya izinkan drag ke bawah (positif) saat layar profile terlihat
+                                if isProfileVisible {
+                                    state = max(0, value.translation.height) // Hanya izinkan drag ke bawah
+                                }
+                            }
+                            .onChanged { value in
+                                // Update offset selama drag
+                                if isProfileVisible {
+                                    profileDragOffset = max(0, value.translation.height)
+                                }
+                            }
+                            .onEnded { value in
+                                if value.translation.height > 100 {
+                                    // Swipe ke bawah berhasil menutup
+                                    withAnimation(.easeInOut(duration: 0.3)) { // Animasi mirip carousel
+                                        isProfileVisible = false
+                                        currentScreen = tabScreens[tabIndex]
+                                        profileDragOffset = UIScreen.main.bounds.height // Kembali ke posisi awal (di luar layar)
+                                    }
+                                } else {
+                                    // Balik ke posisi semula jika tidak cukup swipe
+                                    withAnimation(.easeInOut(duration: 0.3)) {
+                                        profileDragOffset = 0
                                     }
                                 }
-                        )
-                }
+                            }
+                    )
                 
                 // Navigation Dots di bagian bawah (hanya untuk .timer, .home, .data)
                 if currentScreen != .profile {

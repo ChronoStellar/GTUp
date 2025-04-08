@@ -301,12 +301,10 @@ struct TimerView: View {
             // Improved Hold to Stop Popup
             if isTimerRunning && (selectedMode == "Work" || selectedMode == "Break") {
                 // Overlay semi-transparan (tanpa blokir interaksi)
-                Color.black.opacity(0.2)
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
-                ProgressView(value: longPressTime, total: 10) {
-                    Text("progress")
-                }
+
+//                ProgressView(value: longPressTime, total: 10) {
+//                    Text("progress")
+//                }
                 // Popup dengan Progress Bar Memanjang
                 VStack(spacing: 15) {
                     Text("Hold to Stop \(selectedMode ?? "")")
@@ -324,10 +322,6 @@ struct TimerView: View {
                     }
                 }
                 .padding(20)
-                .background(
-                    RoundedRectangle(cornerRadius: 15)
-                        .fill(Color.black.opacity(0.8))
-                )
                 .shadow(color: .black.opacity(0.3), radius: 10, x: 0, y: 5)
                 .position(x: UIScreen.main.bounds.width / 2,
                           y: UIScreen.main.bounds.height - 100)
