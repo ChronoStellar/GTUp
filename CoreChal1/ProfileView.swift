@@ -56,7 +56,7 @@ struct ProfileView: View {
     
     var body: some View {
         ZStack {
-            Color.black
+            Color.primaryApp
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
@@ -265,7 +265,7 @@ struct ProfileView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.vertical, 8)  // Adjusted padding to match the example
                         }
-                        .listRowBackground(Color.black)  // Using black background to blend with the section
+                        .listRowBackground(Color.primaryApp)  // Using black background to blend with the section
                     }
                 }
                 .listStyle(InsetGroupedListStyle())
