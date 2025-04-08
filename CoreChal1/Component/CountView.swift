@@ -7,31 +7,52 @@
 
 import SwiftUI
 
-struct Activity{
-    let id: Int
-    let title: String
-    let ammount: String
-    let metric: String
-}
-
 struct CountView: View {
-    @State var activity: Activity
+    let type: String
+    let count: Int
+    
+    var unit: [String] {
+        switch type {
+        case "Work":
+            return ["workspace", "hours", "You've worked for"]
+        case "Break":
+            return ["walking", "minutes", "You've taken a break for"]
+        default:
+            return ["defaultImage", "", ""]
+        }
+    }
     
     var body: some View {
-        VStack(alignment : .leading) {
-            Text(activity.title)
-                .font(.system(size: 22, weight: .bold, design: .default))
-                .foregroundColor(.fontApp)
-                .lineLimit(1)
-            Text("\(activity.ammount) \(activity.metric)")
-                .font(.system(size: 28, weight: .regular, design: .default))
-                .foregroundColor(.fontApp)
-                .lineLimit(2)
+        ZStack {
+            Color(uiColor: .secondaryApp)
+            VStack(alignment: .leading){
+                Text(type)
+                    .font(.system(size: 32, weight: .bold, design: .default))
+                    .foregroundColor(.fontApp)
+                HStack{
+                    Image(unit[0])
+                        .resizable()
+                        .frame(width: 50, height: 50)
+                        .foregroundColor(.white)
+                        .padding(.leading, 13)
+                    Spacer()
+                    VStack(alignment: .trailing){
+                        Text(unit[2])
+                            .font(.system(size: 14, weight: .medium, design: .default))
+                            .foregroundColor(.fontApp)
+                        Text("\(count) \(unit[1])")
+                            .font(.system(size: 32, weight: .medium, design: .default))
+                            .foregroundColor(.fontApp)
+                    }
+                }
+            }
+            .padding(20)
         }
-        .frame(width: 150, height: 100)
+        .frame(width: 350, height: 140)
+        .cornerRadius(20)
     }
 }
 
 #Preview {
-    CountView(activity: Activity(id: 0, title: "STEPS", ammount: "12", metric: "step"))
+    CountView(type: "Work", count:1)
 }

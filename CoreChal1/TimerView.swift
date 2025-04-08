@@ -10,6 +10,8 @@ import Combine
 import UserNotifications
 
 struct TimerView: View {
+    let breakRecord: Break
+    
     @State private var isAnimating: Bool = false
     @State private var lineOffset: CGFloat = 0
     @State private var textOpacity: Double = 0
@@ -433,6 +435,8 @@ struct TimerView: View {
                         breakDurationOpacity = 0
                     }
                     loadTimerValues()
+                    //check only when break is done
+                    breakRecord.recordBreak()
                 }
             }
         }
@@ -619,8 +623,4 @@ struct CurvedLine: Shape {
         
         return path
     }
-}
-
-#Preview {
-    TimerView()
 }

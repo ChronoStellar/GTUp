@@ -12,7 +12,7 @@ struct DataSummaryView: View {
         ZStack {
             Color(uiColor: .secondaryApp)
             VStack(alignment: .leading) {
-                Text("Hello, World!")
+                Text("Summary")
                     .font(.system(size: 22, weight: .regular))
                     .foregroundColor(.fontApp)
                     .padding(.bottom)
