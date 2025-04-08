@@ -22,13 +22,10 @@ struct DataView: View {
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.fontApp)
                     CalendarView(selectedDate: $selectedDate)
-//                    Text("Selected: \(selectedDate, style: .date)")
-//                        .padding().foregroundColor(.white)
+                    Color.secondaryApp.frame(height: 5)
                 }
                 .ignoresSafeArea(edges: .top)
                 .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.secondary)
                 VStack(spacing: 16) {
                     CountView(type: "Work", count: 1)
                     CountView(type: "Break", count: 3)
@@ -39,7 +36,3 @@ struct DataView: View {
         }
     }
 }
-
-//#Preview {
-//    DataView()
-//}
