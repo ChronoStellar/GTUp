@@ -98,9 +98,9 @@ struct ContentView: View {
                                 tabIndex += 1
                                 currentScreen = tabScreens[tabIndex]
                             }
-                            // Swipe atas untuk buka profile
+                            // Swipe atas untuk buka profile hanya dari halaman home
                             let verticalTranslation = value.translation.height
-                            if verticalTranslation < -100 && currentScreen != .profile {
+                            if verticalTranslation < -100 && currentScreen == .home { // Hanya dari home
                                 withAnimation(.interpolatingSpring(stiffness: 200, damping: 25, initialVelocity: 0)) {
                                     isProfileVisible = true
                                     currentScreen = .profile
