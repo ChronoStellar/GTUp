@@ -591,3 +591,8 @@ struct CurvedLine: Shape {
         return path
     }
 }
+
+// Preview untuk TimerView
+#Preview {
+    TimerView(breakRecord: Break(date: Date(), stepCounter: 0, breakCounter: 0), isTimerRunning: .constant(false))
+}
