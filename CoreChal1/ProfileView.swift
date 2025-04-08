@@ -329,8 +329,24 @@ struct ProfileView: View {
                                 .foregroundColor(.white.opacity(0.7))
                                 .padding(.horizontal)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                            
                             Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+//                            Spacer()
                         }
                     }
                 }
@@ -349,14 +365,14 @@ struct ProfileView: View {
                                 List {
                                     NavigationLink {
                                         DetailView(
-                                            title: "Productivity Patterns",
-                                            content: "This study analyzes how different working patterns, such as the timing of breaks and the structure of work hours, impact overall productivity over extended periods. The research involves tracking participants' work habits and measuring their output to identify optimal strategies for maximizing efficiency.",
-                                            sourceLink: "https://www.example.com/productivity-patterns"
+                                            title: "Effects of Active Microbreak",
+                                            content: "Risk factors associated with sedentary work and prolonged sitting time can be detrimental to office workers’ health and productivity. Recent literature introduced the concept of active microbreaks and their benefits to sedentary workers. The purpose of this study was to better define active microbreaks and to determine the evidence behind utilizing active microbreaks at work, through a qualitative synthesis of the literature in a systematic review. A comprehensive systematic search was conducted using primarily ergonomics, medicine and allied health databases, in addition to grey literature (CINAHL, Google Scholar, PubMed, and ScienceDirect) and respective ergonomics journals. Six interventional controlled trials (232 total participants) met the inclusion criteria and qualified for the inclusion in this review. The quality of the reviewed articles was deemed to be moderate to high according to the utilized assessment scales. The results of this review may support the use of short active microbreaks (2–3 minutes of light intensity exercises every 30 minutes) due to the observed physical and mental health benefits without negative impact on productivity in the workplace.",
+                                            sourceLink: "https://www.tandfonline.com/doi/pdf/10.1080/23311916.2022.2026206"
                                         )
                                     } label: {
                                         ResearchStudyRow(
-                                            title: "Productivity Patterns",
-                                            description: "Analyze how working patterns affect productivity over time"
+                                            title: "Effects of Active Microbreak",
+                                            description: "How active microbreaks can positively impact the physical and mental well-being of office workers."
                                         )
                                     }
                                     .listRowBackground(Color.gray.opacity(0.2))
@@ -364,21 +380,21 @@ struct ProfileView: View {
                                         Rectangle()
                                             .frame(height: 0.5)
                                             .foregroundColor(.white.opacity(0.3))
-                                            .padding(.horizontal, 16)
-                                            .offset(y: 30),
+                                            .padding(.horizontal, 5)
+                                            .offset(y: 10),
                                         alignment: .bottom
                                     )
                                     
                                     NavigationLink {
                                         DetailView(
-                                            title: "Rest Break Analysis",
-                                            content: "This research focuses on determining the optimal duration and timing of rest breaks during a workday to enhance productivity and reduce fatigue. Participants are monitored to assess how different break schedules affect their performance and well-being.",
-                                            sourceLink: "https://www.example.com/rest-break-analysis"
+                                            title: "Workstation Setup Effects on Discomfort and Productivity",
+                                            content: "Compare musculoskeletal discomfort, productivity, postural risks, and perceived fatigue for a sit-stand-walk intervention between two workstation configurations – one, individually customized for office workers according to ergonomic guidelines (Ergo-Fit); another, self-adjusted by office workers according to their preference (Self-Adjusted).",
+                                            sourceLink: "https://www.sciencedirect.com/science/article/abs/pii/S0003687018307221"
                                         )
                                     } label: {
                                         ResearchStudyRow(
-                                            title: "Rest Break Analysis",
-                                            description: "Study the optimal duration and timing of breaks"
+                                            title: "Workstation Setup Effects on Discomfort and Productivity",
+                                            description: "This study compares two workstation setups—ergonomically-fitted (Ergo-Fit) and self-adjusted—during a 60-minute sit-stand-walk computer task."
                                         )
                                     }
                                     .listRowBackground(Color.gray.opacity(0.2))
@@ -386,21 +402,21 @@ struct ProfileView: View {
                                         Rectangle()
                                             .frame(height: 0.5)
                                             .foregroundColor(.white.opacity(0.3))
-                                            .padding(.horizontal, 16)
-                                            .offset(y: 30),
+                                            .padding(.horizontal, 5)
+                                            .offset(y: 10),
                                         alignment: .bottom
                                     )
                                     
                                     NavigationLink {
                                         DetailView(
-                                            title: "Focus Time Measurement",
-                                            content: "This study measures periods of deep work across various work settings to understand how environmental factors influence focus and productivity. The research aims to provide insights into creating ideal conditions for sustained concentration.",
-                                            sourceLink: "https://www.example.com/focus-time-measurement"
+                                            title: "Computer Terminal Work and The Benefit of Microbreaks",
+                                            content: "Microbreaks are scheduled rest breaks taken to prevent the onset or progression of cumulative trauma disorders in the computerized workstation environment. The authors examined the benefit of microbreaks by investigating myoelectric signal (MES) behavior, perceived discomfort, and worker productivity while individuals performed their usual keying work. Participants were randomly assigned to one of three experimental groups. Each participant provided data from working sessions where they took no breaks, and from working sessions where they took breaks according to their group assignment: microbreaks at their own discretion (control), microbreaks at 20 min intervals, and microbreaks at 40 min intervals. Four main muscle areas were studied: the cervical extensors, the lumbar erector spinae, the upper trapezius/supraspinatus, and the wrist and finger extensors. The authors have previously shown that when computer workers remained seated at their workstation, the muscles performing sustained postural contractions displayed a cyclic trend in the mean frequency (MNF) of the MES (McLean et al., J. Electrophysiol. Kinesiol. 10 (1) (2000) 33). The data provided evidence (p < 0.05) that all microbreak protocols were associated with a higher frequency of MNF cycling at the wrist extensors, at the neck when microbreaks were taken by the control and 40 min protocol groups, and at the back when breaks were taken by the 20 and 40 min protocol groups. No significant change in the frequency of MNF cycling was noted at the shoulder. It was determined (p < 0.05) that microbreaks had a positive effect on reducing discomfort in all areas studied during computer terminal work, particularly when breaks were taken at 20 min intervals. Finally, microbreaks showed no evidence of a detrimental effect on worker productivity. The underlying cause of MNF cycling, and its relationship to the development of discomfort or cumulative trauma disorders remains to be determined.",
+                                            sourceLink: "https://www.researchgate.net/publication/11945902_Computer_terminal_work_and_the_benefit_of_microbreaks"
                                         )
                                     } label: {
                                         ResearchStudyRow(
-                                            title: "Focus Time Measurement",
-                                            description: "Measure deep work periods across different work settings"
+                                            title: "Computer Terminal Work and The Benefit of Microbreaks",
+                                            description: "The efect of `microbreak protocols on muscle activation behavior"
                                         )
                                     }
                                     .listRowBackground(Color.gray.opacity(0.2))
@@ -411,11 +427,11 @@ struct ProfileView: View {
                                 
                                 Spacer()
                                 
-                                Text("Your participation in research studies is completely voluntary. You can opt out at any time.")
-                                    .font(.footnote)
-                                    .foregroundColor(.white.opacity(0.7))
-                                    .padding(.horizontal)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+//                                Text("Your participation in research studies is completely voluntary. You can opt out at any time.")
+//                                    .font(.footnote)
+//                                    .foregroundColor(.white.opacity(0.7))
+//                                    .padding(.horizontal)
+//                                    .frame(maxWidth: .infinity, alignment: .leading)
                             }
                             .background(Color.black)
                             .navigationBarHidden(true)
@@ -446,6 +462,14 @@ struct ProfileView: View {
                                 }
                                 .listRowBackground(Color.gray.opacity(0.2))
                                 .listRowSeparator(.visible) // Ensure the default separator is visible
+                                .overlay(
+                                    Rectangle()
+                                        .frame(height: 0.5)
+                                        .foregroundColor(.white.opacity(0.3))
+                                        .padding(.horizontal, 5)
+                                        .offset(y: 10),
+                                    alignment: .bottom
+                                )
                                 
                                 HStack {
                                     VStack(alignment: .leading) {
@@ -470,8 +494,29 @@ struct ProfileView: View {
                                 .foregroundColor(.white.opacity(0.7))
                                 .padding(.horizontal)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                            
                             Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                    
                         }
                     }
                 }
@@ -664,6 +709,12 @@ struct AppsView: View {
                             }
                         }
                         .listRowBackground(Color.gray.opacity(0.2))
+                        .overlay(
+                            Rectangle()
+                                .frame(width: 900.0, height: 0.5)
+                                .foregroundColor(.white.opacity(0.3))
+                                .offset(y: 30)
+                        )
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             Button(role: .destructive) {
                                 appToDelete = app
@@ -682,8 +733,25 @@ struct AppsView: View {
                     .foregroundColor(.white.opacity(0.7))
                     .padding(.horizontal)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                
                 Spacer()
+                Spacer()
+                Spacer()
+                Spacer()
+                Spacer()
+                Spacer()
+                Spacer()
+                Spacer()
+                Spacer()
+                Spacer()
+                Spacer()
+                Spacer()
+                Spacer()
+                Spacer()
+                Spacer()
+                Spacer()
+                Spacer()
+                Spacer()
+            
             }
             .background(Color.black)
             .alert(isPresented: $showDeleteAlert) {
