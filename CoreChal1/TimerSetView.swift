@@ -21,11 +21,11 @@ struct TimerSetView: View {
     
     // Ganti dua state alert dengan satu state menggunakan enum
     enum AlertType {
-        case success
         case error
         case none
     }
     @State private var alertType: AlertType = .none
+    @State private var showSuccessNotification: Bool = false // State untuk notifikasi sukses
     
     @State private var selectedLabel: String = "None"
     @State private var labels: [String] = ["None", "Work", "Study", "Exercise"]
@@ -145,8 +145,16 @@ struct TimerSetView: View {
                         // Kirim notifikasi ke TimerView
                         NotificationCenter.default.post(name: NSNotification.Name("TimerSetNotification"), object: nil)
                         
-                        print("Setting alertType to success") // Debugging
-                        alertType = .success // Set tipe alert ke success
+                        print("Showing success notification") // Debugging
+                        withAnimation {
+                            showSuccessNotification = true // Tampilkan notifikasi sukses
+                        }
+                        // Sembunyikan notifikasi setelah 2 detik
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            withAnimation {
+                                showSuccessNotification = false
+                            }
+                        }
                     }
                 }) {
                     Text("Set")
@@ -164,12 +172,6 @@ struct TimerSetView: View {
                 )) {
                     print("Showing alert, type: \(alertType)") // Debugging
                     switch alertType {
-                    case .success:
-                        return Alert(
-                            title: Text("Timer Ready!"),
-                            message: Text("Your timer has been set successfully. Let's get to work!"),
-                            dismissButton: .default(Text("OK"))
-                        )
                     case .error:
                         return Alert(
                             title: Text("Invalid Timer"),
@@ -245,19 +247,39 @@ struct TimerSetView: View {
                 Spacer()
             }
             
+            // Success Notification
+            if showSuccessNotification {
+                VStack {
+                    HStack(spacing: 10) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(.white)
+                            .font(.system(size: 20))
+                        Text("Timer Set Successfully!")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.white)
+                    }
+                    .padding()
+                    .background(Color.green.opacity(0.9))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .shadow(color: .black.opacity(0.2), radius: 5, x: 0, y: 2)
+                    .transition(.opacity)
+                }
+                .position(x: UIScreen.main.bounds.width / 2, y: 100) // Posisi di atas layar
+            }
+            
             // Time Picker
             if showTimePicker {
-                Color.primaryApp.opacity(0.7) // Overlay dengan efek blur
+                Color.primaryApp.opacity(0.7)
                     .background(.ultraThinMaterial)
                     .ignoresSafeArea()
-                    .environment(\.colorScheme, .dark) // Memaksa overlay menggunakan dark mode
+                    .environment(\.colorScheme, .dark)
                 
                 VStack {
                     HStack {
                         Button("Cancel") {
                             showTimePicker = false
                         }
-                        .foregroundColor(.red) // Warna tombol Cancel sesuai dark mode
+                        .foregroundColor(.red)
                         
                         Spacer()
                         
@@ -267,7 +289,7 @@ struct TimerSetView: View {
                             seconds = tempSeconds
                             showTimePicker = false
                         }
-                        .foregroundColor(.blue.opacity(0.8)) // Warna tombol Done sesuai dark mode
+                        .foregroundColor(.blue.opacity(0.8))
                     }
                     .padding()
                     
@@ -276,7 +298,7 @@ struct TimerSetView: View {
                             ForEach(0..<9) { hour in
                                 Text("\(hour)h")
                                     .tag(hour)
-                                    .foregroundColor(.white) // Teks putih untuk kontras
+                                    .foregroundColor(.white)
                             }
                         }
                         .pickerStyle(.wheel)
@@ -285,7 +307,7 @@ struct TimerSetView: View {
                             ForEach(0..<60) { minute in
                                 Text("\(minute)m")
                                     .tag(minute)
-                                    .foregroundColor(.white) // Teks putih untuk kontras
+                                    .foregroundColor(.white)
                             }
                         }
                         .pickerStyle(.wheel)
@@ -294,34 +316,34 @@ struct TimerSetView: View {
                             ForEach(0..<60) { second in
                                 Text("\(second)s")
                                     .tag(second)
-                                    .foregroundColor(.white) // Teks putih untuk kontras
+                                    .foregroundColor(.white)
                             }
                         }
                         .pickerStyle(.wheel)
                     }
-                    .background(.ultraThinMaterial) // Efek blur untuk latar belakang picker
+                    .background(.ultraThinMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
                 .padding()
-                .background(.ultraThinMaterial) // Efek blur untuk latar belakang modal
+                .background(.ultraThinMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: 20))
                 .padding()
-                .environment(\.colorScheme, .dark) // Memaksa modal menggunakan dark mode
+                .environment(\.colorScheme, .dark)
             }
             
             // Break Picker
             if showBreakPicker {
-                Color.primaryApp.opacity(0.7) // Overlay dengan efek blur
+                Color.primaryApp.opacity(0.7)
                     .background(.ultraThinMaterial)
                     .ignoresSafeArea()
-                    .environment(\.colorScheme, .dark) // Memaksa overlay menggunakan dark mode
+                    .environment(\.colorScheme, .dark)
                 
                 VStack {
                     HStack {
                         Button("Cancel") {
                             showBreakPicker = false
                         }
-                        .foregroundColor(.red) // Warna tombol Cancel sesuai dark mode
+                        .foregroundColor(.red)
                         
                         Spacer()
                         
@@ -329,7 +351,7 @@ struct TimerSetView: View {
                             breakMinutes = tempBreakMinutes
                             showBreakPicker = false
                         }
-                        .foregroundColor(.blue.opacity(0.8)) // Warna tombol Done sesuai dark mode
+                        .foregroundColor(.blue.opacity(0.8))
                     }
                     .padding()
                     
@@ -337,40 +359,40 @@ struct TimerSetView: View {
                         ForEach(1..<16) { minute in
                             Text("\(minute)m")
                                 .tag(minute)
-                                .foregroundColor(.white) // Teks putih untuk kontras
+                                .foregroundColor(.white)
                         }
                     }
                     .pickerStyle(.wheel)
-                    .background(.ultraThinMaterial) // Efek blur untuk latar belakang picker
+                    .background(.ultraThinMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
                 .padding()
-                .background(.ultraThinMaterial) // Efek blur untuk latar belakang modal
+                .background(.ultraThinMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: 20))
                 .padding()
-                .environment(\.colorScheme, .dark) // Memaksa modal menggunakan dark mode
+                .environment(\.colorScheme, .dark)
             }
             
             // Label Picker
             if showLabelPicker {
-                Color.primaryApp.opacity(0.7) // Overlay dengan efek blur
+                Color.primaryApp.opacity(0.7)
                     .background(.ultraThinMaterial)
                     .ignoresSafeArea()
-                    .environment(\.colorScheme, .dark) // Memaksa overlay menggunakan dark mode
+                    .environment(\.colorScheme, .dark)
                 
                 VStack {
                     HStack {
                         Button("Cancel") {
                             showLabelPicker = false
                         }
-                        .foregroundColor(.red) // Warna tombol Cancel sesuai dark mode
+                        .foregroundColor(.red)
                         
                         Spacer()
                         
                         Button("Done") {
                             showLabelPicker = false
                         }
-                        .foregroundColor(.blue.opacity(0.8)) // Warna tombol Done sesuai dark mode
+                        .foregroundColor(.blue.opacity(0.8))
                     }
                     .padding()
                     
@@ -380,7 +402,7 @@ struct TimerSetView: View {
                                 HStack {
                                     Text(label)
                                         .font(.system(size: 16))
-                                        .foregroundColor(.white) // Teks putih untuk kontras
+                                        .foregroundColor(.white)
                                         .padding(.vertical, 10)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .onTapGesture {
@@ -411,17 +433,16 @@ struct TimerSetView: View {
                         }
                     }
                     .frame(height: 200)
-                    .background(.ultraThinMaterial) // Efek blur untuk latar belakang picker
+                    .background(.ultraThinMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     
-                    // Tombol Add New Label
                     Button(action: {
                         showLabelPicker = false
                         showAddLabelModal = true
                     }) {
                         Text("Add New Label")
                             .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(.blue.opacity(0.8)) // Warna lebih lembut
+                            .foregroundColor(.blue.opacity(0.8))
                             .padding(.vertical, 10)
                             .frame(maxWidth: .infinity)
                             .background(Color.gray.opacity(0.2))
@@ -431,18 +452,18 @@ struct TimerSetView: View {
                     .padding(.top, 10)
                 }
                 .padding()
-                .background(.ultraThinMaterial) // Efek blur untuk latar belakang modal
+                .background(.ultraThinMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: 20))
                 .padding()
-                .environment(\.colorScheme, .dark) // Memaksa modal menggunakan dark mode
+                .environment(\.colorScheme, .dark)
             }
             
             // Add Label Modal
             if showAddLabelModal {
-                Color.primaryApp.opacity(0.7) // Overlay dengan efek blur
+                Color.primaryApp.opacity(0.7)
                     .background(.ultraThinMaterial)
                     .ignoresSafeArea()
-                    .environment(\.colorScheme, .dark) // Memaksa overlay menggunakan dark mode
+                    .environment(\.colorScheme, .dark)
                 
                 VStack {
                     HStack {
@@ -450,7 +471,7 @@ struct TimerSetView: View {
                             newLabel = ""
                             showAddLabelModal = false
                         }
-                        .foregroundColor(.red) // Warna tombol Cancel sesuai dark mode
+                        .foregroundColor(.red)
                         
                         Spacer()
                         
@@ -458,50 +479,49 @@ struct TimerSetView: View {
                             if !newLabel.isEmpty && !labels.contains(newLabel) {
                                 labels.append(newLabel)
                                 selectedLabel = newLabel
-                                // Simpan labels ke UserDefaults
                                 UserDefaults.standard.set(labels, forKey: "labels")
                             }
                             newLabel = ""
                             showAddLabelModal = false
                         }
-                        .foregroundColor(.blue.opacity(0.8)) // Warna tombol Done sesuai dark mode
+                        .foregroundColor(.blue.opacity(0.8))
                     }
                     .padding()
                     
                     TextField("Enter new label", text: $newLabel)
                         .font(.system(size: 16))
-                        .foregroundColor(.white) // Teks putih untuk kontras
+                        .foregroundColor(.white)
                         .padding()
                         .background(Color.gray.opacity(0.2))
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
                 .padding()
-                .background(.ultraThinMaterial) // Efek blur untuk latar belakang modal
+                .background(.ultraThinMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: 20))
                 .padding()
-                .environment(\.colorScheme, .dark) // Memaksa modal menggunakan dark mode
+                .environment(\.colorScheme, .dark)
             }
             
             // When Timer Ends Picker Modal
             if showTimerEndPicker {
-                Color.primaryApp.opacity(0.7) // Overlay dengan efek blur
+                Color.primaryApp.opacity(0.7)
                     .background(.ultraThinMaterial)
                     .ignoresSafeArea()
-                    .environment(\.colorScheme, .dark) // Memaksa overlay menggunakan dark mode
+                    .environment(\.colorScheme, .dark)
                 
                 VStack {
                     HStack {
                         Button("Cancel") {
                             showTimerEndPicker = false
                         }
-                        .foregroundColor(.red) // Warna tombol Cancel sesuai dark mode
+                        .foregroundColor(.red)
                         
                         Spacer()
                         
                         Button("Done") {
                             showTimerEndPicker = false
                         }
-                        .foregroundColor(.blue.opacity(0.8)) // Warna tombol Done sesuai dark mode
+                        .foregroundColor(.blue.opacity(0.8))
                     }
                     .padding()
                     
@@ -509,18 +529,18 @@ struct TimerSetView: View {
                         ForEach(timerEndOptions, id: \.self) { option in
                             Text(option)
                                 .tag(option)
-                                .foregroundColor(.white) // Teks putih untuk kontras
+                                .foregroundColor(.white)
                         }
                     }
                     .pickerStyle(.wheel)
-                    .background(.ultraThinMaterial) // Efek blur untuk latar belakang picker
+                    .background(.ultraThinMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
                 .padding()
-                .background(.ultraThinMaterial) // Efek blur untuk latar belakang modal
+                .background(.ultraThinMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: 20))
                 .padding()
-                .environment(\.colorScheme, .dark) // Memaksa modal menggunakan dark mode
+                .environment(\.colorScheme, .dark)
             }
         }
     }
