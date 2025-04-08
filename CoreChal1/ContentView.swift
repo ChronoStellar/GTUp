@@ -57,7 +57,7 @@ struct ContentView: View {
                     TimerView(breakRecord: latestBreak)
                         .tag(1)
                     
-                    TestView()
+                    DataView(breaks: breaks)
                         .environmentObject(manager)
                         .tag(2)
                 }

@@ -435,6 +435,8 @@ struct TimerView: View {
                         breakDurationOpacity = 0
                     }
                     loadTimerValues()
+                    //check only when break is done
+                    breakRecord.recordBreak()
                 }
             }
         }
@@ -453,9 +455,6 @@ struct TimerView: View {
         
         // Hapus notifikasi yang tertunda
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-        
-        //check only when break is done
-        breakRecord.recordBreak()
     }
     
     // Fungsi untuk menghitung progress

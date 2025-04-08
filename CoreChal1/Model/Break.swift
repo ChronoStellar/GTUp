@@ -13,25 +13,19 @@ class Break {
     var date = Date()
     private var stepCounter : Int = 0
     private var breakCounter : Int = 0
-    private var breakDuration : Int = 0
-    private var workDuration : Int = 0
+    
+    var time =  UserDefaults.standard.integer(forKey: "breakTimeRemaining") > 0 ? UserDefaults.standard.integer(forKey: "breakTimeRemaining") : 15
+    var workHours = 8*60 //Change to userdefault
     
     init(date: Date = Date(), stepCounter: Int, breakCounter: Int) {
-        let time =  UserDefaults.standard.integer(forKey: "breakTimeRemaining") > 0 ? UserDefaults.standard.integer(forKey: "breakTimeRemaining") : 15
-        let workHours = 8*60 //Change to userdefault
-        
         self.date = Calendar.current.startOfDay(for: date)
         self.stepCounter = stepCounter
         self.breakCounter = breakCounter
-        self.breakDuration = breakCounter * time
-        self.workDuration = workHours - breakCounter * time
     }
     
     func recordBreak() {
         let breakTimePerSession = UserDefaults.standard.integer(forKey: "breakTimeRemaining") > 0 ? UserDefaults.standard.integer(forKey: "breakTimeRemaining") : 15
         breakCounter += 1
-        breakDuration = breakCounter * breakTimePerSession
-        workDuration = (8 * 60) - breakDuration
     }
     
     // Function to add steps
@@ -44,10 +38,10 @@ class Break {
         return stepCounter
     }
     func getBreakDuration() -> Int {
-        return breakDuration
+        return self.breakCounter * time
     }
     func getWorkDuration() -> Int {
-        return workDuration
+        return self.workHours - self.breakCounter * time
     }
     func getBreakCounter() -> Int {
         return breakCounter
