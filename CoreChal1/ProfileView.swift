@@ -143,8 +143,8 @@ struct ProfileView: View {
                                 DatePicker("", selection: $workingHoursStart, displayedComponents: .hourAndMinute)
                                     .labelsHidden()
                                     .accentColor(.blue)
-                                    .foregroundColor(.white) // Pastikan warna teks putih
-                                    .environment(\.colorScheme, .dark) // Paksa dark mode
+                                    .foregroundColor(.white)
+                                    .environment(\.colorScheme, .dark)
                                     .frame(width: 70)
                                     .onChange(of: workingHoursStart) { _ in
                                         saveValues()
@@ -154,8 +154,8 @@ struct ProfileView: View {
                                 DatePicker("", selection: $workingHoursEnd, displayedComponents: .hourAndMinute)
                                     .labelsHidden()
                                     .accentColor(.blue)
-                                    .foregroundColor(.white) // Pastikan warna teks putih
-                                    .environment(\.colorScheme, .dark) // Paksa dark mode
+                                    .foregroundColor(.white)
+                                    .environment(\.colorScheme, .dark)
                                     .frame(width: 70)
                                     .onChange(of: workingHoursEnd) { _ in
                                         saveValues()
@@ -179,8 +179,8 @@ struct ProfileView: View {
                                 DatePicker("", selection: $restHoursStart, displayedComponents: .hourAndMinute)
                                     .labelsHidden()
                                     .accentColor(.blue)
-                                    .foregroundColor(.white) // Pastikan warna teks putih
-                                    .environment(\.colorScheme, .dark) // Paksa dark mode
+                                    .foregroundColor(.white)
+                                    .environment(\.colorScheme, .dark)
                                     .frame(width: 70)
                                     .onChange(of: restHoursStart) { _ in
                                         saveValues()
@@ -190,8 +190,8 @@ struct ProfileView: View {
                                 DatePicker("", selection: $restHoursEnd, displayedComponents: .hourAndMinute)
                                     .labelsHidden()
                                     .accentColor(.blue)
-                                    .foregroundColor(.white) // Pastikan warna teks putih
-                                    .environment(\.colorScheme, .dark) // Paksa dark mode
+                                    .foregroundColor(.white)
+                                    .environment(\.colorScheme, .dark)
                                     .frame(width: 70)
                                     .onChange(of: restHoursEnd) { _ in
                                         saveValues()
@@ -218,6 +218,8 @@ struct ProfileView: View {
                                     .foregroundColor(.blue)
                             }
                         }
+                        .buttonStyle(PlainButtonStyle()) // Pastikan List tidak menelan interaksi tombol
+                        .contentShape(Rectangle()) // Pastikan area tap tombol dikenali
                         .listRowBackground(Color.gray.opacity(0.2))
                     }
                     
@@ -237,6 +239,8 @@ struct ProfileView: View {
                                     .foregroundColor(.blue)
                             }
                         }
+                        .buttonStyle(PlainButtonStyle()) // Pastikan List tidak menelan interaksi tombol
+                        .contentShape(Rectangle()) // Pastikan area tap tombol dikenali
                         .listRowBackground(Color.gray.opacity(0.2))
                         .overlay(
                             Rectangle()
@@ -256,6 +260,8 @@ struct ProfileView: View {
                                     .foregroundColor(.blue)
                             }
                         }
+                        .buttonStyle(PlainButtonStyle()) // Pastikan List tidak menelan interaksi tombol
+                        .contentShape(Rectangle()) // Pastikan area tap tombol dikenali
                         .listRowBackground(Color.gray.opacity(0.2))
                         .overlay(
                             Rectangle()
@@ -275,6 +281,8 @@ struct ProfileView: View {
                                     .foregroundColor(.blue)
                             }
                         }
+                        .buttonStyle(PlainButtonStyle()) // Pastikan List tidak menelan interaksi tombol
+                        .contentShape(Rectangle()) // Pastikan area tap tombol dikenali
                         .listRowBackground(Color.gray.opacity(0.2))
                         .overlay(
                             Rectangle()
@@ -289,16 +297,16 @@ struct ProfileView: View {
                                 .font(.footnote)
                                 .foregroundColor(.white.opacity(0.7))
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.vertical, 8)  // Adjusted padding to match the example
+                                .padding(.vertical, 8)
                         }
-                        .listRowBackground(Color.primaryApp)  // Using black background to blend with the section
+                        .listRowBackground(Color.primaryApp)
                     }
                 }
                 .listStyle(InsetGroupedListStyle())
                 .scrollContentBackground(.hidden)
                 .foregroundColor(.white)
-                .scrollDisabled(true)
-                // Deteksi scroll untuk dismiss keyboard
+                .scrollDisabled(true) // Dipertahankan sesuai permintaan
+                // Deteksi scroll untuk dismiss keyboard (dipertahankan meskipun scroll disabled)
                 .onScrollPhaseChange { oldPhase, newPhase in
                     if newPhase == .interacting {
                         dismissKeyboard()
@@ -552,10 +560,14 @@ struct ProfileView: View {
             }
         }
         .navigationBarHidden(true)
-        // Tambah gesture untuk dismiss keyboard saat tap di luar
-        .onTapGesture {
-            dismissKeyboard()
-        }
+        // Ubah onTapGesture agar tidak mengganggu tombol
+        .background(
+            Color.clear
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    dismissKeyboard()
+                }
+        )
     }
 }
 
