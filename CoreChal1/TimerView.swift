@@ -463,6 +463,7 @@ struct TimerView: View {
         timer = nil
         self.isTimerRunning = false
         timerStartDate = nil
+        
         UserDefaults.standard.removeObject(forKey: "timerStartDate")
         UserDefaults.standard.removeObject(forKey: "timerMode")
         UserDefaults.standard.removeObject(forKey: "workTimeRemaining")
@@ -473,14 +474,17 @@ struct TimerView: View {
     
     /// test features
     private func interuptTimer(time: Int){
-        if (stepPatienceCounter < 3){
-            if (time % 20 == 0 ){
+        if (stepPatienceCounter <= 3){
+            if (time % 60 == 0 ){
+                print("fetching steps \(stepPatienceCounter)")
                 manager.getTodayStep()
                 currStep = manager.activity
                 tempStep = currStep - prevStep
                 
                 if tempStep >= 50 {
                     stepPatienceCounter += 1
+                }else {
+                    stepPatienceCounter = 0
                 }
                 
                 prevStep = currStep
@@ -488,6 +492,9 @@ struct TimerView: View {
         }else {
             stepPatienceCounter = 0
             stopTimer()
+            currStep = 0
+            prevStep = 0
+            tempStep = 0
         }
     }
     
