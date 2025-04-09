@@ -53,14 +53,14 @@ struct TimerView: View {
                 .stroke(
                     LinearGradient(
                         gradient: Gradient(colors: [
-                            Color.white.opacity(0.2),
-                            Color.white.opacity(0.5),
-                            Color.white.opacity(0.2)
+                            Color.white.opacity(0.3),
+                            Color.white.opacity(0.9),
+                            Color.white.opacity(0.3)
                         ]),
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     ),
-                    style: StrokeStyle(lineWidth: 2, lineCap: .round)
+                    style: StrokeStyle(lineWidth: 6, lineCap: .round)
                 )
                 .frame(width: 300, height: 500)
                 .scaleEffect(lineScale)
@@ -145,8 +145,8 @@ struct TimerView: View {
                     value: workDurationOpacity
                 )
             }
-            .position(x: selectedMode == "Work" ? UIScreen.main.bounds.width / 2 : UIScreen.main.bounds.width / 4,
-                      y: selectedMode == "Work" ? UIScreen.main.bounds.height / 2 : UIScreen.main.bounds.height / 4)
+            .position(x: selectedMode == "Work" ? UIScreen.main.bounds.width / 2 : UIScreen.main.bounds.width / 3.5,
+                      y: selectedMode == "Work" ? UIScreen.main.bounds.height / 2 : UIScreen.main.bounds.height / 5.6)
             .animation(
                 Animation.spring(response: 0.5, dampingFraction: 0.6),
                 value: selectedMode
@@ -251,8 +251,8 @@ struct TimerView: View {
                     value: breakDurationOpacity
                 )
             }
-            .position(x: selectedMode == "Break" ? UIScreen.main.bounds.width / 2 : 3 * UIScreen.main.bounds.width / 4,
-                      y: selectedMode == "Break" ? UIScreen.main.bounds.height / 2 : 2 * UIScreen.main.bounds.height / 3)
+            .position(x: selectedMode == "Break" ? UIScreen.main.bounds.width / 2 : 3 * UIScreen.main.bounds.width / 4.4,
+                      y: selectedMode == "Break" ? UIScreen.main.bounds.height / 2 : 2 * UIScreen.main.bounds.height / 3.6)
             .animation(
                 Animation.spring(response: 0.5, dampingFraction: 0.6),
                 value: selectedMode
