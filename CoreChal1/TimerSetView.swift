@@ -51,13 +51,23 @@ struct TimerSetView: View {
             _hours = State(initialValue: 0)
             _minutes = State(initialValue: 5) // Default 5 menit
             _seconds = State(initialValue: 0)
+            // Simpan default ke UserDefaults
+            UserDefaults.standard.set(0, forKey: "timerHours")
+            UserDefaults.standard.set(5, forKey: "timerMinutes")
+            UserDefaults.standard.set(0, forKey: "timerSeconds")
         } else {
             _hours = State(initialValue: savedHours)
             _minutes = State(initialValue: savedMinutes)
             _seconds = State(initialValue: savedSeconds)
         }
         
-        _breakMinutes = State(initialValue: savedBreakMinutes != 0 ? savedBreakMinutes : 5)
+        // Set default break ke 5 menit kalau belum ada
+        if savedBreakMinutes == 0 {
+            _breakMinutes = State(initialValue: 5)
+            UserDefaults.standard.set(5, forKey: "breakMinutes")
+        } else {
+            _breakMinutes = State(initialValue: savedBreakMinutes)
+        }
         
         if let savedLabels = UserDefaults.standard.array(forKey: "labels") as? [String] {
             _labels = State(initialValue: savedLabels)

@@ -361,11 +361,22 @@ struct TimerView: View {
         let seconds = UserDefaults.standard.integer(forKey: "timerSeconds")
         let breakMinutes = UserDefaults.standard.integer(forKey: "breakMinutes")
         
-        workTimeRemaining = (hours * 3600) + (minutes * 60) + seconds
-        breakTimeRemaining = breakMinutes * 60
+        // Jika semua nilai 0 (user baru), set default ke 5 menit untuk work dan break
+        if hours == 0 && minutes == 0 && seconds == 0 {
+            workTimeRemaining = 5 * 60 // Default 5 menit (300 detik)
+            initialWorkTime = workTimeRemaining
+        } else {
+            workTimeRemaining = (hours * 3600) + (minutes * 60) + seconds
+            initialWorkTime = workTimeRemaining
+        }
         
-        initialWorkTime = workTimeRemaining
-        initialBreakTime = breakTimeRemaining
+        if breakMinutes == 0 {
+            breakTimeRemaining = 5 * 60 // Default 5 menit (300 detik)
+            initialBreakTime = breakTimeRemaining
+        } else {
+            breakTimeRemaining = breakMinutes * 60
+            initialBreakTime = breakTimeRemaining
+        }
         
         stopTimer()
     }
@@ -375,7 +386,20 @@ struct TimerView: View {
         self.isTimerRunning = true
         timerStartDate = Date()
         
-        scheduleNotification()
+        // Pastikan workTimeRemaining dan breakTimeRemaining minimal 1 detik
+        if workTimeRemaining < 1 {
+            workTimeRemaining = 5 * 60 // Default 5 menit
+            initialWorkTime = workTimeRemaining
+        }
+        if breakTimeRemaining < 1 {
+            breakTimeRemaining = 5 * 60 // Default 5 menit
+            initialBreakTime = breakTimeRemaining
+        }
+        
+        // Schedule notifikasi hanya jika timeInterval > 0
+        if (selectedMode == "Work" && workTimeRemaining > 0) || (selectedMode == "Break" && breakTimeRemaining > 0) {
+            scheduleNotification()
+        }
 
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             if selectedMode == "Work" {

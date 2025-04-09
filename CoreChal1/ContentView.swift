@@ -100,7 +100,7 @@ struct ContentView: View {
                             }
                             // Swipe atas untuk buka profile hanya dari halaman home
                             let verticalTranslation = value.translation.height
-                            if verticalTranslation < -100 && currentScreen == .home { // Hanya dari home
+                            if verticalTranslation < -100 && currentScreen == .home {
                                 withAnimation(.interpolatingSpring(stiffness: 200, damping: 25, initialVelocity: 0)) {
                                     isProfileVisible = true
                                     currentScreen = .profile
@@ -155,13 +155,12 @@ struct ContentView: View {
                     )
                     .allowsHitTesting(!isTimerRunning)
                 
-                if currentScreen != .profile {
-                    VStack {
-                        Spacer()
-                        NavigationDotsView(currentScreen: $currentScreen)
-                            .padding(.bottom, 30)
-                            .allowsHitTesting(!isTimerRunning)
-                    }
+                // Navigation dots selalu muncul di semua page
+                VStack {
+                    Spacer()
+                    NavigationDotsView(currentScreen: $currentScreen)
+                        .padding(.bottom, 30)
+                        .allowsHitTesting(!isTimerRunning)
                 }
             }
             .navigationBarBackButtonHidden(true)
@@ -200,11 +199,19 @@ struct NavigationDotsView: View {
     
     var body: some View {
         HStack(spacing: 15) {
-            ForEach(screens, id: \.self) { screen in
-                Circle()
-                    .frame(width: 10, height: 25)
-                    .foregroundColor(currentScreen == screen ? .primaryApp : .gray.opacity(0.7))
-                    .animation(.spring(), value: currentScreen)
+            ForEach(screens.indices, id: \.self) { index in
+                if index == 1 { // Bulatan tengah (halaman home)
+                    Image(systemName: currentScreen == .profile ? "chevron.down" : "chevron.up")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundColor(currentScreen == screens[index] ? .white : .gray.opacity(0.7))
+                        .frame(width: 10, height: 25)
+                        .animation(.easeInOut(duration: 0.3), value: currentScreen)
+                } else {
+                    Circle()
+                        .frame(width: 10, height: 25)
+                        .foregroundColor(currentScreen == screens[index] ? .primaryApp : .gray.opacity(0.7))
+                        .animation(.spring(), value: currentScreen)
+                }
             }
         }
         .padding(.vertical, 2)
