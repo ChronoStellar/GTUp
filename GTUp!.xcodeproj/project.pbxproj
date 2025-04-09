@@ -37,9 +37,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		9B7F3D602D8BBCF50006138E /* CoreChal1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoreChal1.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		9B7F3D722D8BBCF60006138E /* CoreChal1Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoreChal1Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		9B7F3D7C2D8BBCF60006138E /* CoreChal1UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoreChal1UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B7F3D602D8BBCF50006138E /* GTUp!.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "GTUp!.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B7F3D722D8BBCF60006138E /* GTUp!Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "GTUp!Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B7F3D7C2D8BBCF60006138E /* GTUp!UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "GTUp!UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -98,9 +98,9 @@
 		9B7F3D612D8BBCF50006138E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				9B7F3D602D8BBCF50006138E /* CoreChal1.app */,
-				9B7F3D722D8BBCF60006138E /* CoreChal1Tests.xctest */,
-				9B7F3D7C2D8BBCF60006138E /* CoreChal1UITests.xctest */,
+				9B7F3D602D8BBCF50006138E /* GTUp!.app */,
+				9B7F3D722D8BBCF60006138E /* GTUp!Tests.xctest */,
+				9B7F3D7C2D8BBCF60006138E /* GTUp!UITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -108,9 +108,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		9B7F3D5F2D8BBCF50006138E /* CoreChal1 */ = {
+		9B7F3D5F2D8BBCF50006138E /* GTUp! */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9B7F3D862D8BBCF60006138E /* Build configuration list for PBXNativeTarget "CoreChal1" */;
+			buildConfigurationList = 9B7F3D862D8BBCF60006138E /* Build configuration list for PBXNativeTarget "GTUp!" */;
 			buildPhases = (
 				9B7F3D5C2D8BBCF50006138E /* Sources */,
 				9B7F3D5D2D8BBCF50006138E /* Frameworks */,
@@ -124,16 +124,16 @@
 			fileSystemSynchronizedGroups = (
 				9B7F3D622D8BBCF50006138E /* CoreChal1 */,
 			);
-			name = CoreChal1;
+			name = "GTUp!";
 			packageProductDependencies = (
 			);
 			productName = CoreChal1;
-			productReference = 9B7F3D602D8BBCF50006138E /* CoreChal1.app */;
+			productReference = 9B7F3D602D8BBCF50006138E /* GTUp!.app */;
 			productType = "com.apple.product-type.application";
 		};
-		9B7F3D712D8BBCF60006138E /* CoreChal1Tests */ = {
+		9B7F3D712D8BBCF60006138E /* GTUp!Tests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9B7F3D892D8BBCF60006138E /* Build configuration list for PBXNativeTarget "CoreChal1Tests" */;
+			buildConfigurationList = 9B7F3D892D8BBCF60006138E /* Build configuration list for PBXNativeTarget "GTUp!Tests" */;
 			buildPhases = (
 				9B7F3D6E2D8BBCF60006138E /* Sources */,
 				9B7F3D6F2D8BBCF60006138E /* Frameworks */,
@@ -147,16 +147,16 @@
 			fileSystemSynchronizedGroups = (
 				9B7F3D752D8BBCF60006138E /* CoreChal1Tests */,
 			);
-			name = CoreChal1Tests;
+			name = "GTUp!Tests";
 			packageProductDependencies = (
 			);
 			productName = CoreChal1Tests;
-			productReference = 9B7F3D722D8BBCF60006138E /* CoreChal1Tests.xctest */;
+			productReference = 9B7F3D722D8BBCF60006138E /* GTUp!Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		9B7F3D7B2D8BBCF60006138E /* CoreChal1UITests */ = {
+		9B7F3D7B2D8BBCF60006138E /* GTUp!UITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9B7F3D8C2D8BBCF60006138E /* Build configuration list for PBXNativeTarget "CoreChal1UITests" */;
+			buildConfigurationList = 9B7F3D8C2D8BBCF60006138E /* Build configuration list for PBXNativeTarget "GTUp!UITests" */;
 			buildPhases = (
 				9B7F3D782D8BBCF60006138E /* Sources */,
 				9B7F3D792D8BBCF60006138E /* Frameworks */,
@@ -170,11 +170,11 @@
 			fileSystemSynchronizedGroups = (
 				9B7F3D7F2D8BBCF60006138E /* CoreChal1UITests */,
 			);
-			name = CoreChal1UITests;
+			name = "GTUp!UITests";
 			packageProductDependencies = (
 			);
 			productName = CoreChal1UITests;
-			productReference = 9B7F3D7C2D8BBCF60006138E /* CoreChal1UITests.xctest */;
+			productReference = 9B7F3D7C2D8BBCF60006138E /* GTUp!UITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -200,7 +200,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 9B7F3D5B2D8BBCF50006138E /* Build configuration list for PBXProject "CoreChal1" */;
+			buildConfigurationList = 9B7F3D5B2D8BBCF50006138E /* Build configuration list for PBXProject "GTUp!" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -214,9 +214,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				9B7F3D5F2D8BBCF50006138E /* CoreChal1 */,
-				9B7F3D712D8BBCF60006138E /* CoreChal1Tests */,
-				9B7F3D7B2D8BBCF60006138E /* CoreChal1UITests */,
+				9B7F3D5F2D8BBCF50006138E /* GTUp! */,
+				9B7F3D712D8BBCF60006138E /* GTUp!Tests */,
+				9B7F3D7B2D8BBCF60006138E /* GTUp!UITests */,
 			);
 		};
 /* End PBXProject section */
@@ -272,12 +272,12 @@
 /* Begin PBXTargetDependency section */
 		9B7F3D742D8BBCF60006138E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 9B7F3D5F2D8BBCF50006138E /* CoreChal1 */;
+			target = 9B7F3D5F2D8BBCF50006138E /* GTUp! */;
 			targetProxy = 9B7F3D732D8BBCF60006138E /* PBXContainerItemProxy */;
 		};
 		9B7F3D7E2D8BBCF60006138E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 9B7F3D5F2D8BBCF50006138E /* CoreChal1 */;
+			target = 9B7F3D5F2D8BBCF50006138E /* GTUp! */;
 			targetProxy = 9B7F3D7D2D8BBCF60006138E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -478,7 +478,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CoreChal1.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CoreChal1";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GTUp!.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GTUp!";
 			};
 			name = Debug;
 		};
@@ -496,7 +496,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CoreChal1.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CoreChal1";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GTUp!.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GTUp!";
 			};
 			name = Release;
 		};
@@ -535,7 +535,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		9B7F3D5B2D8BBCF50006138E /* Build configuration list for PBXProject "CoreChal1" */ = {
+		9B7F3D5B2D8BBCF50006138E /* Build configuration list for PBXProject "GTUp!" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9B7F3D842D8BBCF60006138E /* Debug */,
@@ -544,7 +544,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9B7F3D862D8BBCF60006138E /* Build configuration list for PBXNativeTarget "CoreChal1" */ = {
+		9B7F3D862D8BBCF60006138E /* Build configuration list for PBXNativeTarget "GTUp!" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9B7F3D872D8BBCF60006138E /* Debug */,
@@ -553,7 +553,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9B7F3D892D8BBCF60006138E /* Build configuration list for PBXNativeTarget "CoreChal1Tests" */ = {
+		9B7F3D892D8BBCF60006138E /* Build configuration list for PBXNativeTarget "GTUp!Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9B7F3D8A2D8BBCF60006138E /* Debug */,
@@ -562,7 +562,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9B7F3D8C2D8BBCF60006138E /* Build configuration list for PBXNativeTarget "CoreChal1UITests" */ = {
+		9B7F3D8C2D8BBCF60006138E /* Build configuration list for PBXNativeTarget "GTUp!UITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9B7F3D8D2D8BBCF60006138E /* Debug */,
