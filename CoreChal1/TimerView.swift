@@ -11,6 +11,8 @@ import UserNotifications
 
 struct TimerView: View {
     let breakRecord: Break
+    var onBreakRecorded: () -> Void
+    
     @Binding var isTimerRunning: Bool
     
     @State private var isAnimating: Bool = false
@@ -405,6 +407,9 @@ struct TimerView: View {
             if selectedMode == "Work" {
                 if workTimeRemaining > 0 {
                     workTimeRemaining -= 1
+                    //add logic here
+                    
+                    
                 } else {
                     stopTimer()
                     withAnimation {
@@ -617,6 +622,6 @@ struct CurvedLine: Shape {
 }
 
 // Preview untuk TimerView
-#Preview {
-    TimerView(breakRecord: Break(date: Date(), stepCounter: 0, breakCounter: 0), isTimerRunning: .constant(false))
-}
+//#Preview {
+//    TimerView(breakRecord: Break(date: Date(), stepCounter: 0, breakCounter: 0), isTimerRunning: .constant(false))
+//}

@@ -8,30 +8,44 @@ import SwiftUI
 import Charts
 
 struct DataView: View {
-    @State var selectedDate : String = ""
-    let breaks : [Break]
+    let selectedBreak: Break? // Receive a single Break or nil
+    @Binding var selectedDate: String
     
     var body: some View {
         ZStack {
             Color(uiColor: .primaryApp)
                 .ignoresSafeArea()
             VStack(spacing: 20) {
-                // Header
                 VStack {
                     Text("Health Data")
-                        .font(.system(size: 20, weight: .bold))
+                        .font(.system(size: 20, weight: .bold, design: .default))
                         .foregroundColor(.fontApp)
                     CalendarView(selectedDate: $selectedDate)
                     Color.secondaryApp.frame(height: 5)
                 }
                 .ignoresSafeArea(edges: .top)
                 .padding()
+                
                 VStack(spacing: 16) {
-                    CountView(type: "Work", count: 1)
-                    CountView(type: "Break", count: 3)
+                    // Verify the break matches selectedDate
+                    if let breakDate = selectedBreak?.date, breakDate == selectedDate {
+                        CountView(type: "Work", count: Int(selectedBreak?.getWorkDuration() ?? 0))
+                        CountView(type: "Break", count: (selectedBreak?.getBreakTotal()) ?? 0)
+                    } else {
+                        Text("No data for \(selectedDate)")
+                            .foregroundColor(.fontApp)
+                    }
                     DataSummaryView()
                 }
                 Spacer()
+            }
+        }
+        .onAppear {
+            // Optional: Log for debugging
+            if let breakDate = selectedBreak?.date {
+                print("DataView received break for date: \(breakDate), selectedDate: \(selectedDate)")
+            } else {
+                print("DataView received no break for selectedDate: \(selectedDate)")
             }
         }
     }

@@ -15,9 +15,9 @@ struct DataSummaryView: View {
                 Text("Summary")
                     .font(.system(size: 22, weight: .regular))
                     .foregroundColor(.fontApp)
-                    .padding(.bottom)
-                Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
-                    .font(.system(size: 16))
+                    .padding(.bottom, 3)
+                Text("Great job staying active today! You took 5 micro breaks, each lasting 5 minutes, and walked 100 steps per break, totaling 500 steps—an excellent way to reduce prolonged sitting. Keep up the momentum, and consider adding a few stretches or extra steps to enhance your routine.!")
+                    .font(.system(size: 14))
                     .foregroundColor(Color(uiColor: .fontApp))
                 
             }.padding()

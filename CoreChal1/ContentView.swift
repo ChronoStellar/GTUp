@@ -18,12 +18,10 @@ enum Screen {
 struct ContentView: View {
     @EnvironmentObject var manager: HealthKitManager
     @Environment(\.modelContext) private var modelContext
-    @Query private var breaks: [Break]
     
-    init() {
-        let today = Calendar.current.startOfDay(for: Date())
-        _breaks = Query(filter: #Predicate<Break> { $0.date == today })
-    }
+    @State private var breaks: [Break] = []
+    
+    @State private var selectedDate: String
     
     @State private var currentScreen: Screen = .home
     @State private var tabIndex: Int = 1
@@ -36,14 +34,43 @@ struct ContentView: View {
     
     private let tabScreens: [Screen] = [.timer, .home, .data]
     
+    init() {
+        let today = Calendar.current.startOfDay(for: Date())
+        let todayString = today.formattedAsQueryDate
+        _selectedDate = State(initialValue: todayString)
+        UserDefaults.standard.set(todayString, forKey: "todayDate")
+    }
+    
+    // Latest Break for today (used by TimerView)
     private var latestBreak: Break {
-        if let lastBreak = breaks.last {
-            return lastBreak
-        } else {
-            let newBreak = Break(date: Date(), stepCounter: 0, breakCounter: 0)
+        let today = Calendar.current.startOfDay(for: Date()).formattedAsQueryDate
+        let predicate = #Predicate<Break> { data in
+            data.date == today
+        }
+        do {
+            let descriptor = FetchDescriptor<Break>(predicate: predicate, sortBy: [SortDescriptor(\.date, order: .reverse)])
+            let todayBreaks = try modelContext.fetch(descriptor)
+            if let existingBreak = todayBreaks.last { // Get the most recent Break for today
+                print("Using existing Break for today: \(existingBreak.date)")
+                return existingBreak
+            } else {
+                let newBreak = Break(date: Date()) // Today’s date
+                modelContext.insert(newBreak)
+                try modelContext.save()
+                print("Created new Break for today: \(newBreak.date)")
+                return newBreak
+            }
+        } catch {
+            print("Failed to fetch or save Break: \(error)")
+            let newBreak = Break(date: Date()) // Fallback
             modelContext.insert(newBreak)
             return newBreak
         }
+    }
+    
+    // Break for the selected date (used by DataView)
+    private var selectedBreak: Break? {
+        breaks.first { $0.date == selectedDate }
     }
     
     var body: some View {
@@ -60,8 +87,13 @@ struct ContentView: View {
                         .animation(.interpolatingSpring(stiffness: 200, damping: 25, initialVelocity: 0), value: dragOffset)
                     
                     // TimerView (index 1)
-                    TimerView(breakRecord: latestBreak, isTimerRunning: $isTimerRunning)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    TimerView(
+                        breakRecord: latestBreak,
+                        onBreakRecorded: {
+                        updateQuery() // Refresh breaks when a break is recorded
+                        },
+                        isTimerRunning: $isTimerRunning
+                        ).frame(maxWidth: .infinity, maxHeight: .infinity)
                         .offset(x: offsetForIndex(1))
                         .opacity(opacityForIndex(1))
                         .allowsHitTesting(tabIndex == 1)
@@ -69,7 +101,7 @@ struct ContentView: View {
                         .animation(.interpolatingSpring(stiffness: 200, damping: 25, initialVelocity: 0), value: dragOffset)
                     
                     // DataView (index 2)
-                    DataView(breaks: breaks)
+                    DataView(selectedBreak: selectedBreak, selectedDate: $selectedDate)
                         .environmentObject(manager)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .offset(x: offsetForIndex(2))
@@ -165,6 +197,13 @@ struct ContentView: View {
             }
             .navigationBarBackButtonHidden(true)
         }
+        .onAppear {
+            updateQuery() // Initial fetch for selectedDate
+        }
+        .onChange(of: selectedDate) { oldValue, newValue in
+            updateQuery() // Update breaks for DataView
+        }
+
     }
     
     // Hitung offset untuk tiap halaman
@@ -188,6 +227,18 @@ struct ContentView: View {
         case .profile: return Color.primaryApp
         case .data: return Color.primaryApp
         case .timer: return Color.primaryApp
+        }
+    }
+    private func updateQuery() {
+        let predicate = #Predicate<Break> { data in
+            data.date == selectedDate
+        }
+        do {
+            let descriptor = FetchDescriptor<Break>(predicate: predicate)
+            breaks = try modelContext.fetch(descriptor)
+            print("Fetched breaks for \(selectedDate): \(breaks.count)")
+        } catch {
+            print("Fetch failed: \(error)")
         }
     }
 }
