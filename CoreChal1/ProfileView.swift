@@ -13,7 +13,9 @@ struct ProfileView: View {
     @State private var showingDevices = false
     @State private var showingApps = false
     
-    @Environment(\.colorScheme) var colorScheme
+    // State untuk melacak apakah keyboard aktif
+    @FocusState private var isNameFieldFocused: Bool
+    @FocusState private var isAgeFieldFocused: Bool
     
     private let timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -54,6 +56,12 @@ struct ProfileView: View {
         UserDefaults.standard.set(restHoursEnd, forKey: "restHoursEnd")
     }
     
+    // Fungsi untuk dismiss keyboard
+    private func dismissKeyboard() {
+        isNameFieldFocused = false
+        isAgeFieldFocused = false
+    }
+    
     var body: some View {
         ZStack {
             Color.primaryApp
@@ -85,6 +93,7 @@ struct ProfileView: View {
                             })
                             .foregroundColor(.white.opacity(0.7))
                             .multilineTextAlignment(.trailing)
+                            .focused($isNameFieldFocused)
                         }
                         .listRowBackground(Color.gray.opacity(0.2))
                         .overlay(
@@ -104,6 +113,19 @@ struct ProfileView: View {
                             .foregroundColor(.white.opacity(0.7))
                             .keyboardType(.numberPad)
                             .multilineTextAlignment(.trailing)
+                            .focused($isAgeFieldFocused)
+                            .toolbar {
+                                ToolbarItemGroup(placement: .keyboard) {
+                                    Spacer()
+                                    Button(action: {
+                                        dismissKeyboard()
+                                    }) {
+                                        Text("Done")
+                                            .foregroundColor(.blue)
+                                            .font(.system(size: 16, weight: .semibold))
+                                    }
+                                }
+                            }
                         }
                         .listRowBackground(Color.gray.opacity(0.2))
                         .overlay(
@@ -121,7 +143,8 @@ struct ProfileView: View {
                                 DatePicker("", selection: $workingHoursStart, displayedComponents: .hourAndMinute)
                                     .labelsHidden()
                                     .accentColor(.blue)
-                                    .colorInvert()
+                                    .foregroundColor(.white) // Pastikan warna teks putih
+                                    .environment(\.colorScheme, .dark) // Paksa dark mode
                                     .frame(width: 70)
                                     .onChange(of: workingHoursStart) { _ in
                                         saveValues()
@@ -131,7 +154,8 @@ struct ProfileView: View {
                                 DatePicker("", selection: $workingHoursEnd, displayedComponents: .hourAndMinute)
                                     .labelsHidden()
                                     .accentColor(.blue)
-                                    .colorInvert()
+                                    .foregroundColor(.white) // Pastikan warna teks putih
+                                    .environment(\.colorScheme, .dark) // Paksa dark mode
                                     .frame(width: 70)
                                     .onChange(of: workingHoursEnd) { _ in
                                         saveValues()
@@ -155,7 +179,8 @@ struct ProfileView: View {
                                 DatePicker("", selection: $restHoursStart, displayedComponents: .hourAndMinute)
                                     .labelsHidden()
                                     .accentColor(.blue)
-                                    .colorInvert()
+                                    .foregroundColor(.white) // Pastikan warna teks putih
+                                    .environment(\.colorScheme, .dark) // Paksa dark mode
                                     .frame(width: 70)
                                     .onChange(of: restHoursStart) { _ in
                                         saveValues()
@@ -165,7 +190,8 @@ struct ProfileView: View {
                                 DatePicker("", selection: $restHoursEnd, displayedComponents: .hourAndMinute)
                                     .labelsHidden()
                                     .accentColor(.blue)
-                                    .colorInvert()
+                                    .foregroundColor(.white) // Pastikan warna teks putih
+                                    .environment(\.colorScheme, .dark) // Paksa dark mode
                                     .frame(width: 70)
                                     .onChange(of: restHoursEnd) { _ in
                                         saveValues()
@@ -272,12 +298,17 @@ struct ProfileView: View {
                 .scrollContentBackground(.hidden)
                 .foregroundColor(.white)
                 .scrollDisabled(true)
+                // Deteksi scroll untuk dismiss keyboard
+                .onScrollPhaseChange { oldPhase, newPhase in
+                    if newPhase == .interacting {
+                        dismissKeyboard()
+                    }
+                }
                 
                 // Sheet with iOS-style navigation bar for Notifications
                 .sheet(isPresented: $showingNotifications) {
                     ModalView(title: "Notifications", isPresented: $showingNotifications) {
                         VStack(alignment: .leading, spacing: 15) {
-                            // Adding padding between navigation bar and list
                             Spacer()
                                 .frame(height: 20)
                             
@@ -346,7 +377,6 @@ struct ProfileView: View {
                             Spacer()
                             Spacer()
                             Spacer()
-//                            Spacer()
                         }
                     }
                 }
@@ -420,18 +450,11 @@ struct ProfileView: View {
                                         )
                                     }
                                     .listRowBackground(Color.gray.opacity(0.2))
-                                    // No separator for the last row
                                 }
                                 .listStyle(PlainListStyle())
                                 .scrollContentBackground(.hidden)
                                 
                                 Spacer()
-                                
-//                                Text("Your participation in research studies is completely voluntary. You can opt out at any time.")
-//                                    .font(.footnote)
-//                                    .foregroundColor(.white.opacity(0.7))
-//                                    .padding(.horizontal)
-//                                    .frame(maxWidth: .infinity, alignment: .leading)
                             }
                             .background(Color.black)
                             .navigationBarHidden(true)
@@ -443,7 +466,6 @@ struct ProfileView: View {
                 .sheet(isPresented: $showingDevices) {
                     ModalView(title: "Devices", isPresented: $showingDevices) {
                         VStack(alignment: .leading, spacing: 15) {
-                            // Adding padding between navigation bar and list
                             Spacer()
                                 .frame(height: 20)
                             
@@ -461,7 +483,7 @@ struct ProfileView: View {
                                         .foregroundColor(.green)
                                 }
                                 .listRowBackground(Color.gray.opacity(0.2))
-                                .listRowSeparator(.visible) // Ensure the default separator is visible
+                                .listRowSeparator(.visible)
                                 .overlay(
                                     Rectangle()
                                         .frame(height: 0.5)
@@ -484,7 +506,7 @@ struct ProfileView: View {
                                         .foregroundColor(.green)
                                 }
                                 .listRowBackground(Color.gray.opacity(0.2))
-                                .listRowSeparator(.visible) // Ensure the default separator is visible
+                                .listRowSeparator(.visible)
                             }
                             .listStyle(PlainListStyle())
                             .scrollContentBackground(.hidden)
@@ -516,7 +538,6 @@ struct ProfileView: View {
                             Spacer()
                             Spacer()
                             Spacer()
-                    
                         }
                     }
                 }
@@ -531,6 +552,10 @@ struct ProfileView: View {
             }
         }
         .navigationBarHidden(true)
+        // Tambah gesture untuk dismiss keyboard saat tap di luar
+        .onTapGesture {
+            dismissKeyboard()
+        }
     }
 }
 
@@ -599,7 +624,7 @@ struct NotificationSettingRow: View {
     }
 }
 
-// Helper component for research studies - UPDATED to remove status and change chevron color to blue
+// Helper component for research studies
 struct ResearchStudyRow: View {
     let title: String
     let description: String
@@ -751,7 +776,6 @@ struct AppsView: View {
                 Spacer()
                 Spacer()
                 Spacer()
-            
             }
             .background(Color.black)
             .alert(isPresented: $showDeleteAlert) {
