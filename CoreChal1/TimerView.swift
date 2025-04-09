@@ -10,6 +10,7 @@ import Combine
 import UserNotifications
 
 struct TimerView: View {
+    @EnvironmentObject var manager: HealthKitManager
     let breakRecord: Break
     var onBreakRecorded: () -> Void
     
@@ -38,6 +39,11 @@ struct TimerView: View {
     @State private var initialWorkTime: Int = 0
     @State private var initialBreakTime: Int = 0
     @State private var timer: Timer? = nil
+    
+    @State private var prevStep: Int = 0
+    @State private var currStep: Int = 0
+    @State private var tempStep: Int = 0
+    @State private var stepPatienceCounter: Int = 0
     
     @State private var isLongPressing: Bool = false
     @State private var longPressProgress: CGFloat = 0.0
@@ -408,7 +414,7 @@ struct TimerView: View {
                 if workTimeRemaining > 0 {
                     workTimeRemaining -= 1
                     //add logic here
-                    
+                    interuptTimer(time: workTimeRemaining)
                     
                 } else {
                     stopTimer()
@@ -463,6 +469,26 @@ struct TimerView: View {
         UserDefaults.standard.removeObject(forKey: "breakTimeRemaining")
         
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+    }
+    
+    /// test features
+    private func interuptTimer(time: Int){
+        if (stepPatienceCounter < 3){
+            if (time % 20 == 0 ){
+                manager.getTodayStep()
+                currStep = manager.activity
+                tempStep = currStep - prevStep
+                
+                if tempStep >= 50 {
+                    stepPatienceCounter += 1
+                }
+                
+                prevStep = currStep
+            }
+        }else {
+            stepPatienceCounter = 0
+            stopTimer()
+        }
     }
     
     private func progress(for timeRemaining: Int, initial: Int) -> CGFloat {

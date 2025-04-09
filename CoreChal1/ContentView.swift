@@ -93,7 +93,9 @@ struct ContentView: View {
                         updateQuery() // Refresh breaks when a break is recorded
                         },
                         isTimerRunning: $isTimerRunning
-                        ).frame(maxWidth: .infinity, maxHeight: .infinity)
+                        )
+                        .environmentObject(manager)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .offset(x: offsetForIndex(1))
                         .opacity(opacityForIndex(1))
                         .allowsHitTesting(tabIndex == 1)
