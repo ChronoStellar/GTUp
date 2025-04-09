@@ -40,7 +40,7 @@ struct DataView: View {
                             .background(.secondaryApp)
                             .cornerRadius(20)
                     }
-                    DataSummaryView()
+                    DataSummaryView(selectedBreak: selectedBreak)
                 }
                 Spacer()
             }
