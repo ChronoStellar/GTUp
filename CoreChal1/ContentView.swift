@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  CoreChal1
-//
-//  Created by Hendrik Nicolas Carlo on 24/03/25.
-//
-
 import SwiftUI
 import SwiftData
 
@@ -29,8 +22,20 @@ struct ContentView: View {
     @State private var profileDragOffset: CGFloat = UIScreen.main.bounds.height
     @GestureState private var dragState: CGFloat = 0
     @State private var isTimerRunning: Bool = false
-    @State private var dragOffset: CGFloat = 0 // Untuk animasi drag carousel
-    @State private var profileOpacity: Double = 0.0 // Untuk animasi opacity profile
+    @State private var dragOffset: CGFloat = 0
+    @State private var profileOpacity: Double = 0.0
+    
+    // State untuk mengontrol visibilitas pemberitahuan swipe up
+    @State private var showSwipeUpHint: Bool = true
+    @State private var hintOpacity: Double = 0.0
+    @State private var arrowOffset: CGFloat = 0.0
+    
+    // State untuk mengontrol visibilitas pemberitahuan swipe kiri/kanan
+    @State private var showSwipeSideHint: Bool = true
+    @State private var sideHintOpacity: Double = 0.0
+    @State private var leftArrowOffset: CGFloat = 0.0
+    @State private var rightArrowOffset: CGFloat = 0.0
+    @State private var hasShownSwipeSideHint: Bool = false // State untuk melacak apakah swipe side hint sudah ditampilkan selama sesi ini
     
     private let tabScreens: [Screen] = [.timer, .home, .data]
     
@@ -39,9 +44,12 @@ struct ContentView: View {
         let todayString = today.formattedAsQueryDate
         _selectedDate = State(initialValue: todayString)
         UserDefaults.standard.set(todayString, forKey: "todayDate")
+        
+        // Reset state untuk swipe side hint setiap kali aplikasi dibuka
+        _hasShownSwipeSideHint = State(initialValue: false)
+        _showSwipeSideHint = State(initialValue: true)
     }
     
-    // Latest Break for today (used by TimerView)
     private var latestBreak: Break {
         let today = Calendar.current.startOfDay(for: Date()).formattedAsQueryDate
         let predicate = #Predicate<Break> { data in
@@ -50,11 +58,11 @@ struct ContentView: View {
         do {
             let descriptor = FetchDescriptor<Break>(predicate: predicate, sortBy: [SortDescriptor(\.date, order: .reverse)])
             let todayBreaks = try modelContext.fetch(descriptor)
-            if let existingBreak = todayBreaks.last { // Get the most recent Break for today
+            if let existingBreak = todayBreaks.last {
                 print("Using existing Break for today: \(existingBreak.date)")
                 return existingBreak
             } else {
-                let newBreak = Break(date: Date()) // Today’s date
+                let newBreak = Break(date: Date())
                 modelContext.insert(newBreak)
                 try modelContext.save()
                 print("Created new Break for today: \(newBreak.date)")
@@ -62,13 +70,12 @@ struct ContentView: View {
             }
         } catch {
             print("Failed to fetch or save Break: \(error)")
-            let newBreak = Break(date: Date()) // Fallback
+            let newBreak = Break(date: Date())
             modelContext.insert(newBreak)
             return newBreak
         }
     }
     
-    // Break for the selected date (used by DataView)
     private var selectedBreak: Break? {
         breaks.first { $0.date == selectedDate }
     }
@@ -77,7 +84,6 @@ struct ContentView: View {
         NavigationStack {
             ZStack {
                 ZStack {
-                    // TimerSetView (index 0)
                     TimerSetView()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .offset(x: offsetForIndex(0))
@@ -86,23 +92,21 @@ struct ContentView: View {
                         .animation(.interpolatingSpring(stiffness: 200, damping: 25, initialVelocity: 0), value: tabIndex)
                         .animation(.interpolatingSpring(stiffness: 200, damping: 25, initialVelocity: 0), value: dragOffset)
                     
-                    // TimerView (index 1)
                     TimerView(
                         breakRecord: latestBreak,
                         onBreakRecorded: {
-                        updateQuery() // Refresh breaks when a break is recorded
+                            updateQuery()
                         },
                         isTimerRunning: $isTimerRunning
-                        )
-                        .environmentObject(manager)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .offset(x: offsetForIndex(1))
-                        .opacity(opacityForIndex(1))
-                        .allowsHitTesting(tabIndex == 1)
-                        .animation(.interpolatingSpring(stiffness: 200, damping: 25, initialVelocity: 0), value: tabIndex)
-                        .animation(.interpolatingSpring(stiffness: 200, damping: 25, initialVelocity: 0), value: dragOffset)
+                    )
+                    .environmentObject(manager)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .offset(x: offsetForIndex(1))
+                    .opacity(opacityForIndex(1))
+                    .allowsHitTesting(tabIndex == 1)
+                    .animation(.interpolatingSpring(stiffness: 200, damping: 25, initialVelocity: 0), value: tabIndex)
+                    .animation(.interpolatingSpring(stiffness: 200, damping: 25, initialVelocity: 0), value: dragOffset)
                     
-                    // DataView (index 2)
                     DataView(selectedBreak: selectedBreak, selectedDate: $selectedDate)
                         .environmentObject(manager)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -117,22 +121,19 @@ struct ContentView: View {
                 .gesture(
                     isTimerRunning ? nil : DragGesture()
                         .onChanged { value in
-                            // Update dragOffset selama swipe
                             dragOffset = value.translation.width
                         }
                         .onEnded { value in
-                            // Swipe kiri/kanan untuk ganti halaman
                             let horizontalTranslation = value.translation.width
                             if horizontalTranslation > 50 && tabIndex > 0 {
-                                // Swipe kanan -> ke halaman kiri (index lebih kecil)
                                 tabIndex -= 1
                                 currentScreen = tabScreens[tabIndex]
+                                showSwipeSideHint = false // Sembunyikan hint saat swipe
                             } else if horizontalTranslation < -50 && tabIndex < tabScreens.count - 1 {
-                                // Swipe kiri -> ke halaman kanan (index lebih besar)
                                 tabIndex += 1
                                 currentScreen = tabScreens[tabIndex]
+                                showSwipeSideHint = false // Sembunyikan hint saat swipe
                             }
-                            // Swipe atas untuk buka profile hanya dari halaman home
                             let verticalTranslation = value.translation.height
                             if verticalTranslation < -100 && currentScreen == .home {
                                 withAnimation(.interpolatingSpring(stiffness: 200, damping: 25, initialVelocity: 0)) {
@@ -140,9 +141,9 @@ struct ContentView: View {
                                     currentScreen = .profile
                                     profileDragOffset = 0
                                     profileOpacity = 1.0
+                                    showSwipeUpHint = false
                                 }
                             }
-                            // Reset dragOffset setelah swipe selesai
                             withAnimation(.interpolatingSpring(stiffness: 200, damping: 25, initialVelocity: 0)) {
                                 dragOffset = 0
                             }
@@ -166,7 +167,6 @@ struct ContentView: View {
                             .onChanged { value in
                                 if isProfileVisible {
                                     profileDragOffset = max(0, value.translation.height)
-                                    // Update opacity berdasarkan posisi drag
                                     let screenHeight = UIScreen.main.bounds.height
                                     profileOpacity = 1.0 - min(1.0, profileDragOffset / screenHeight)
                                 }
@@ -178,6 +178,9 @@ struct ContentView: View {
                                         currentScreen = tabScreens[tabIndex]
                                         profileDragOffset = UIScreen.main.bounds.height
                                         profileOpacity = 0.0
+                                        showSwipeUpHint = true
+                                        // Tidak menampilkan swipe side hint lagi selama sesi ini
+                                        startHintAnimation()
                                     }
                                 } else {
                                     withAnimation(.interpolatingSpring(stiffness: 200, damping: 25, initialVelocity: 0)) {
@@ -189,9 +192,86 @@ struct ContentView: View {
                     )
                     .allowsHitTesting(!isTimerRunning)
                 
-                // Navigation dots selalu muncul di semua page
+                // Pemberitahuan swipe kiri/kanan (muncul setiap kali aplikasi dibuka)
+                if tabIndex == 1 && showSwipeSideHint && !isTimerRunning {
+                    HStack {
+                        // Swipe kiri
+                        VStack(spacing: 5) {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundColor(.white)
+                                .offset(x: leftArrowOffset)
+                                .animation(
+                                    Animation.easeInOut(duration: 0.8)
+                                        .repeatForever(autoreverses: true),
+                                    value: leftArrowOffset
+                                )
+                            
+                            Text("Swipe left to set timer")
+                                .font(.system(size: 16, weight: .medium, design: .rounded))
+                                .foregroundColor(.white)
+                                .multilineTextAlignment(.leading)
+                        }
+                        .opacity(sideHintOpacity)
+                        .padding(.leading, 20)
+                        
+                        Spacer()
+                        
+                        // Swipe kanan
+                        VStack(spacing: 5) {
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundColor(.white)
+                                .offset(x: rightArrowOffset)
+                                .animation(
+                                    Animation.easeInOut(duration: 0.8)
+                                        .repeatForever(autoreverses: true),
+                                    value: rightArrowOffset
+                                )
+                            
+                            Text("Swipe right to see data")
+                                .font(.system(size: 16, weight: .medium, design: .rounded))
+                                .foregroundColor(.white)
+                                .multilineTextAlignment(.trailing)
+                        }
+                        .opacity(sideHintOpacity)
+                        .padding(.trailing, 20)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                    .animation(.easeInOut(duration: 0.5), value: sideHintOpacity)
+                    .onAppear {
+                        startSideHintAnimation()
+                    }
+                }
+                
+                // Navigation dots dan pemberitahuan swipe up
                 VStack {
                     Spacer()
+                    
+                    if tabIndex == 1 && showSwipeUpHint && !isTimerRunning {
+                        VStack(spacing: 5) {
+                            Image(systemName: "chevron.up")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundColor(.white)
+                                .offset(y: arrowOffset)
+                                .animation(
+                                    Animation.easeInOut(duration: 0.8)
+                                        .repeatForever(autoreverses: true),
+                                    value: arrowOffset
+                                )
+                            
+                            Text("Swipe up to see profile")
+                                .font(.system(size: 16, weight: .medium, design: .rounded))
+                                .foregroundColor(.white)
+                        }
+                        .opacity(hintOpacity)
+                        .animation(.easeInOut(duration: 0.5), value: hintOpacity)
+                        .padding(.bottom, 10)
+                        .onAppear {
+                            startHintAnimation()
+                        }
+                    }
+                    
                     NavigationDotsView(currentScreen: $currentScreen)
                         .padding(.bottom, 30)
                         .allowsHitTesting(!isTimerRunning)
@@ -200,22 +280,60 @@ struct ContentView: View {
             .navigationBarBackButtonHidden(true)
         }
         .onAppear {
-            updateQuery() // Initial fetch for selectedDate
+            updateQuery()
         }
         .onChange(of: selectedDate) { oldValue, newValue in
-            updateQuery() // Update breaks for DataView
+            updateQuery()
         }
-
     }
     
-    // Hitung offset untuk tiap halaman
+    private func startHintAnimation() {
+        hintOpacity = 0.0
+        arrowOffset = 0.0
+        
+        withAnimation(.easeInOut(duration: 0.5)) {
+            hintOpacity = 0.8
+        }
+        
+        withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) {
+            arrowOffset = -10
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            withAnimation(.easeInOut(duration: 0.5)) {
+                showSwipeUpHint = false
+            }
+        }
+    }
+    
+    private func startSideHintAnimation() {
+        sideHintOpacity = 0.0
+        leftArrowOffset = 0.0
+        rightArrowOffset = 0.0
+        
+        withAnimation(.easeInOut(duration: 0.5)) {
+            sideHintOpacity = 0.8
+        }
+        
+        withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) {
+            leftArrowOffset = -10
+            rightArrowOffset = 10
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            withAnimation(.easeInOut(duration: 0.5)) {
+                showSwipeSideHint = false
+                hasShownSwipeSideHint = true // Tandai bahwa hint sudah ditampilkan selama sesi ini
+            }
+        }
+    }
+    
     private func offsetForIndex(_ index: Int) -> CGFloat {
         let screenWidth = UIScreen.main.bounds.width
         let position = CGFloat(index - tabIndex) * screenWidth
         return position + dragOffset
     }
     
-    // Hitung opacity untuk tiap halaman
     private func opacityForIndex(_ index: Int) -> Double {
         let screenWidth = UIScreen.main.bounds.width
         let position = abs(CGFloat(index - tabIndex) * screenWidth + dragOffset)
@@ -231,6 +349,7 @@ struct ContentView: View {
         case .timer: return Color.primaryApp
         }
     }
+    
     private func updateQuery() {
         let predicate = #Predicate<Break> { data in
             data.date == selectedDate
@@ -253,7 +372,7 @@ struct NavigationDotsView: View {
     var body: some View {
         HStack(spacing: 15) {
             ForEach(screens.indices, id: \.self) { index in
-                if index == 1 { // Bulatan tengah (halaman home)
+                if index == 1 {
                     Image(systemName: currentScreen == .profile ? "chevron.down" : "chevron.up")
                         .font(.system(size: 10, weight: .bold))
                         .foregroundColor(currentScreen == screens[index] ? .white : .gray.opacity(0.7))
