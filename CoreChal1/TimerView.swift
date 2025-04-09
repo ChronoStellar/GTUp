@@ -97,7 +97,7 @@ struct TimerView: View {
                     )
                 
                 Text("Work")
-                    .font(.system(size: 60, weight: .bold, design: .rounded))
+                    .font(.system(size: 60, weight: .bold, design: .default))
                     .foregroundColor(.white)
                     .opacity(textOpacity)
                     .scaleEffect(textScale * workScale * workPulse)
@@ -202,7 +202,7 @@ struct TimerView: View {
                     )
                 
                 Text("Break")
-                    .font(.system(size: 60, weight: .bold, design: .rounded))
+                    .font(.system(size: 60, weight: .bold, design: .default))
                     .foregroundColor(.white)
                     .opacity(textOpacity)
                     .scaleEffect(textScale * breakScale * breakPulse)

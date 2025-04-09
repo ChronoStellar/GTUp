@@ -101,7 +101,7 @@ struct TimerSetView: View {
                         showTimePicker.toggle()
                     }) {
                         Text(String(format: "%02d:%02d:%02d", hours, minutes, seconds))
-                            .font(.system(size: 60, weight: .bold, design: .monospaced))
+                            .font(.system(size: 60, weight: .light, design: .default))
                             .foregroundColor(.white)
                     }
                     
@@ -246,6 +246,7 @@ struct TimerSetView: View {
                         
                         Toggle("", isOn: $vibrateOn)
                             .labelsHidden()
+                            .toggleStyle(SwitchToggleStyle(tint: .blue))
                     }
                     .padding(.horizontal)
                     .padding(.vertical, 10)

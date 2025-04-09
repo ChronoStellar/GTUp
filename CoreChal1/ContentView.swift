@@ -260,7 +260,7 @@ struct NavigationDotsView: View {
                 } else {
                     Circle()
                         .frame(width: 10, height: 25)
-                        .foregroundColor(currentScreen == screens[index] ? .primaryApp : .gray.opacity(0.7))
+                        .foregroundColor(currentScreen == screens[index] ? .white : .gray.opacity(0.7))
                         .animation(.spring(), value: currentScreen)
                 }
             }

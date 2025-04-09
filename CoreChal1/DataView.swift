@@ -32,8 +32,13 @@ struct DataView: View {
                         CountView(type: "Work", count: Int(selectedBreak?.getWorkDuration() ?? 0))
                         CountView(type: "Break", count: (selectedBreak?.getBreakTotal()) ?? 0)
                     } else {
-                        Text("No data for \(selectedDate)")
-                            .foregroundColor(.fontApp)
+                        VStack(alignment: .center) {
+                            Text("No data for \(selectedDate)")
+                                .foregroundColor(.fontApp)
+                                .font(.system(size: 18, weight: .bold, design: .default))
+                        }.frame(width: 360, height: 100)
+                            .background(.secondaryApp)
+                            .cornerRadius(20)
                     }
                     DataSummaryView()
                 }
