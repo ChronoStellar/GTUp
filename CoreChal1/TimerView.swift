@@ -73,17 +73,13 @@ struct TimerView: View {
                 .frame(width: 300, height: 500)
                 .scaleEffect(lineScale)
                 .offset(lineOffsetXY)
+                // Hapus animasi berulang untuk lineOffset
                 .animation(
-                    Animation.easeInOut(duration: 3)
-                        .repeatForever(autoreverses: true),
-                    value: lineOffset
-                )
-                .animation(
-                    Animation.spring(response: 0.5, dampingFraction: 0.6),
+                    Animation.spring(response: 0.7, dampingFraction: 0.8), // Buat spring lebih halus
                     value: lineScale
                 )
                 .animation(
-                    Animation.spring(response: 0.5, dampingFraction: 0.6),
+                    Animation.spring(response: 0.7, dampingFraction: 0.8), // Buat spring lebih halus
                     value: lineOffsetXY
                 )
                 .onAppear {
@@ -106,24 +102,20 @@ struct TimerView: View {
                     .font(.system(size: 60, weight: .bold, design: .default))
                     .foregroundColor(.white)
                     .opacity(textOpacity)
-                    .scaleEffect(textScale * workScale * workPulse)
+                    .scaleEffect(textScale * workScale) // Hapus workPulse
                     .offset(workOffset)
                     .animation(
-                        Animation.spring(response: 0.5, dampingFraction: 0.6)
+                        Animation.spring(response: 0.7, dampingFraction: 0.8) // Buat spring lebih halus
                             .delay(0.2),
                         value: textScale
                     )
+                    // Hapus animasi workPulse
                     .animation(
-                        Animation.easeInOut(duration: 1.5)
-                            .repeatForever(autoreverses: true),
-                        value: workPulse
-                    )
-                    .animation(
-                        Animation.spring(response: 0.5, dampingFraction: 0.6),
+                        Animation.spring(response: 0.7, dampingFraction: 0.8), // Buat spring lebih halus
                         value: workScale
                     )
                     .animation(
-                        Animation.spring(response: 0.5, dampingFraction: 0.6),
+                        Animation.spring(response: 0.7, dampingFraction: 0.8), // Buat spring lebih halus
                         value: workOffset
                     )
                 
@@ -152,6 +144,14 @@ struct TimerView: View {
                     Animation.easeInOut(duration: 0.5),
                     value: workDurationOpacity
                 )
+
+                // Tambah "Hold to Stop" di sini untuk Work
+                if isTimerRunning && selectedMode == "Work" {
+                    Text("Hold to Stop")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundColor(.white)
+                        .padding(.top, 10) // Jarak sedikit dari progress bar
+                }
             }
             .position(x: selectedMode == "Work" ? UIScreen.main.bounds.width / 2 : UIScreen.main.bounds.width / 3.5,
                       y: selectedMode == "Work" ? UIScreen.main.bounds.height / 2 : UIScreen.main.bounds.height / 5.6)
@@ -192,7 +192,7 @@ struct TimerView: View {
                     }
             )
             .onAppear {
-                workPulse = 1.05
+                // Hapus pengaturan workPulse
             }
             
             VStack(spacing: 25) {
@@ -211,25 +211,20 @@ struct TimerView: View {
                     .font(.system(size: 60, weight: .bold, design: .default))
                     .foregroundColor(.white)
                     .opacity(textOpacity)
-                    .scaleEffect(textScale * breakScale * breakPulse)
+                    .scaleEffect(textScale * breakScale) // Hapus breakPulse
                     .offset(breakOffset)
                     .animation(
-                        Animation.spring(response: 0.5, dampingFraction: 0.6)
+                        Animation.spring(response: 0.7, dampingFraction: 0.8) // Buat spring lebih halus
                             .delay(0.4),
                         value: textScale
                     )
+                    // Hapus animasi breakPulse
                     .animation(
-                        Animation.easeInOut(duration: 1.5)
-                            .repeatForever(autoreverses: true)
-                            .delay(0.3),
-                        value: breakPulse
-                    )
-                    .animation(
-                        Animation.spring(response: 0.5, dampingFraction: 0.6),
+                        Animation.spring(response: 0.7, dampingFraction: 0.8), // Buat spring lebih halus
                         value: breakScale
                     )
                     .animation(
-                        Animation.spring(response: 0.5, dampingFraction: 0.6),
+                        Animation.spring(response: 0.7, dampingFraction: 0.8), // Buat spring lebih halus
                         value: breakOffset
                     )
                 
@@ -258,6 +253,14 @@ struct TimerView: View {
                     Animation.easeInOut(duration: 0.5),
                     value: breakDurationOpacity
                 )
+
+                // Tambah "Hold to Stop" di sini untuk Break
+                if isTimerRunning && selectedMode == "Break" {
+                    Text("Hold to Stop")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundColor(.white)
+                        .padding(.top, 10) // Jarak sedikit dari progress bar
+                }
             }
             .position(x: selectedMode == "Break" ? UIScreen.main.bounds.width / 2 : 3 * UIScreen.main.bounds.width / 4.4,
                       y: selectedMode == "Break" ? UIScreen.main.bounds.height / 2 : 2 * UIScreen.main.bounds.height / 3.6)
@@ -298,45 +301,7 @@ struct TimerView: View {
                     }
             )
             .onAppear {
-                breakPulse = 1.05
-            }
-            
-            if isTimerRunning && (selectedMode == "Work" || selectedMode == "Break") {
-                VStack(spacing: 15) {
-                    Text("Hold to Stop \(selectedMode ?? "")")
-                        .font(.system(size: 20, weight: .semibold))
-                        .foregroundColor(.white)
-                    
-                    ZStack(alignment: .leading) {
-                        RoundedRectangle(cornerRadius: 5)
-                            .fill(Color.white.opacity(0.2))
-                            .frame(width: 200, height: 10)
-                        
-                        RoundedRectangle(cornerRadius: 5)
-                            .fill(Color.white)
-                            .frame(width: 200 * longPressProgress, height: 10)
-                    }
-                }
-                .padding(20)
-                .shadow(color: .black.opacity(0.3), radius: 10, x: 0, y: 5)
-                .position(x: UIScreen.main.bounds.width / 2,
-                          y: UIScreen.main.bounds.height - 100)
-                .gesture(
-                    LongPressGesture(minimumDuration: longPressDuration)
-                        .onChanged { _ in
-                            if isTimerRunning {
-                                print("Long press started on popup")
-                                startLongPress()
-                            }
-                        }
-                        .onEnded { _ in
-                            if isTimerRunning {
-                                print("Long press ended on popup")
-                                stopLongPress()
-                                resetToInitialState()
-                            }
-                        }
-                )
+                // Hapus pengaturan breakPulse
             }
         }
         .onAppear {
@@ -647,7 +612,4 @@ struct CurvedLine: Shape {
     }
 }
 
-// Preview untuk TimerView
-//#Preview {
-//    TimerView(breakRecord: Break(date: Date(), stepCounter: 0, breakCounter: 0), isTimerRunning: .constant(false))
-//}
+

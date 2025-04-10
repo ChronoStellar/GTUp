@@ -36,6 +36,7 @@ struct ContentView: View {
     @State private var leftArrowOffset: CGFloat = 0.0
     @State private var rightArrowOffset: CGFloat = 0.0
     @State private var hasShownSwipeSideHint: Bool = false // State untuk melacak apakah swipe side hint sudah ditampilkan selama sesi ini
+    @State private var stopArrowAnimation: Bool = false // State untuk menghentikan animasi panah
     
     private let tabScreens: [Screen] = [.timer, .home, .data]
     
@@ -179,7 +180,6 @@ struct ContentView: View {
                                         profileDragOffset = UIScreen.main.bounds.height
                                         profileOpacity = 0.0
                                         showSwipeUpHint = true
-                                        // Tidak menampilkan swipe side hint lagi selama sesi ini
                                         startHintAnimation()
                                     }
                                 } else {
@@ -200,10 +200,9 @@ struct ContentView: View {
                             Image(systemName: "chevron.left")
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(.white)
-                                .offset(x: leftArrowOffset)
+                                .offset(x: stopArrowAnimation ? 0 : leftArrowOffset) // Hentikan animasi panah jika stopArrowAnimation = true
                                 .animation(
-                                    Animation.easeInOut(duration: 0.8)
-                                        .repeatForever(autoreverses: true),
+                                    stopArrowAnimation ? nil : Animation.easeInOut(duration: 0.8).repeatForever(autoreverses: true),
                                     value: leftArrowOffset
                                 )
                             
@@ -213,7 +212,7 @@ struct ContentView: View {
                                 .multilineTextAlignment(.leading)
                         }
                         .opacity(sideHintOpacity)
-                        .padding(.leading, 20)
+                        .padding(.leading, 5)
                         
                         Spacer()
                         
@@ -222,10 +221,9 @@ struct ContentView: View {
                             Image(systemName: "chevron.right")
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(.white)
-                                .offset(x: rightArrowOffset)
+                                .offset(x: stopArrowAnimation ? 0 : rightArrowOffset) // Hentikan animasi panah jika stopArrowAnimation = true
                                 .animation(
-                                    Animation.easeInOut(duration: 0.8)
-                                        .repeatForever(autoreverses: true),
+                                    stopArrowAnimation ? nil : Animation.easeInOut(duration: 0.8).repeatForever(autoreverses: true),
                                     value: rightArrowOffset
                                 )
                             
@@ -235,10 +233,10 @@ struct ContentView: View {
                                 .multilineTextAlignment(.trailing)
                         }
                         .opacity(sideHintOpacity)
-                        .padding(.trailing, 20)
+                        .padding(.trailing, 5)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                    .animation(.easeInOut(duration: 0.5), value: sideHintOpacity)
+                    // Hapus modifier .animation untuk menghindari konflik
                     .onAppear {
                         startSideHintAnimation()
                     }
@@ -301,6 +299,7 @@ struct ContentView: View {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
             withAnimation(.easeInOut(duration: 0.5)) {
+                hintOpacity = 0.0
                 showSwipeUpHint = false
             }
         }
@@ -310,6 +309,7 @@ struct ContentView: View {
         sideHintOpacity = 0.0
         leftArrowOffset = 0.0
         rightArrowOffset = 0.0
+        stopArrowAnimation = false
         
         withAnimation(.easeInOut(duration: 0.5)) {
             sideHintOpacity = 0.8
@@ -320,10 +320,27 @@ struct ContentView: View {
             rightArrowOffset = 10
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            withAnimation(.easeInOut(duration: 0.5)) {
-                showSwipeSideHint = false
-                hasShownSwipeSideHint = true // Tandai bahwa hint sudah ditampilkan selama sesi ini
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+            // Hentikan animasi panah sebelum opacity menjadi 0
+            withAnimation(.easeInOut(duration: 0.3)) {
+                self.stopArrowAnimation = true
+                self.leftArrowOffset = 0
+                self.rightArrowOffset = 0
+            }
+            
+            // Tunggu hingga animasi panah selesai, lalu mulai animasi opacity
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                withAnimation(.easeInOut(duration: 0.7)) { // Durasi lebih lama untuk transisi lebih halus
+                    print("Side hint opacity before fade out: \(self.sideHintOpacity)")
+                    self.sideHintOpacity = 0.0
+                }
+                
+                // Tunggu hingga animasi opacity selesai, lalu hapus view
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                    print("Side hint opacity after fade out: \(self.sideHintOpacity)")
+                    self.showSwipeSideHint = false
+                    self.hasShownSwipeSideHint = true
+                }
             }
         }
     }
